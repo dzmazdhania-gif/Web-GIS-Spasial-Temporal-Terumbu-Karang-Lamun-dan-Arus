@@ -7,7 +7,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Marine Ecosystem Spatial Data Portal</title>
+<title>Marine Spatial Data Portal</title>
 
 
 <!-- =========================
@@ -22,9 +22,9 @@
 
 <style>
 
-/* =========================
+/* =========================================================
    GLOBAL
-========================= */
+========================================================= */
 
 * {
     box-sizing: border-box;
@@ -42,10 +42,14 @@ body {
     color: #173b43;
 }
 
+a {
+    text-decoration: none;
+}
 
-/* =========================
+
+/* =========================================================
    HEADER
-========================= */
+========================================================= */
 
 header {
 
@@ -58,7 +62,7 @@ header {
 
     color: white;
 
-    padding: 25px 40px;
+    padding: 22px 40px;
 
     position: sticky;
 
@@ -109,9 +113,11 @@ nav {
 
     display: flex;
 
-    gap: 6px;
+    gap: 5px;
 
     flex-wrap: wrap;
+
+    justify-content: flex-end;
 }
 
 
@@ -119,11 +125,9 @@ nav a {
 
     color: white;
 
-    text-decoration: none;
-
     font-size: 13px;
 
-    padding: 9px 12px;
+    padding: 9px 11px;
 
     border-radius: 7px;
 
@@ -138,9 +142,9 @@ nav a:hover {
 }
 
 
-/* =========================
+/* =========================================================
    HERO
-========================= */
+========================================================= */
 
 .hero {
 
@@ -153,7 +157,7 @@ nav a:hover {
 
     color: white;
 
-    padding: 65px 30px;
+    padding: 70px 30px;
 }
 
 
@@ -196,7 +200,7 @@ nav a:hover {
 
     margin-top: 18px;
 
-    max-width: 800px;
+    max-width: 850px;
 
     line-height: 1.7;
 
@@ -206,9 +210,9 @@ nav a:hover {
 }
 
 
-/* =========================
-   MAIN CONTAINER
-========================= */
+/* =========================================================
+   CONTAINER
+========================================================= */
 
 .container {
 
@@ -222,7 +226,7 @@ nav a:hover {
 
 .section {
 
-    margin-bottom: 60px;
+    margin-bottom: 65px;
 }
 
 
@@ -250,16 +254,16 @@ nav a:hover {
 }
 
 
-/* =========================
+/* =========================================================
    DASHBOARD
-========================= */
+========================================================= */
 
 .dashboard {
 
     display: grid;
 
     grid-template-columns:
-        repeat(4, 1fr);
+        repeat(4,1fr);
 
     gap: 18px;
 }
@@ -316,9 +320,9 @@ nav a:hover {
 }
 
 
-/* =========================
-   MAP LAYOUT
-========================= */
+/* =========================================================
+   TEMPORAL MAP LAYOUT
+========================================================= */
 
 .map-layout {
 
@@ -331,9 +335,9 @@ nav a:hover {
 }
 
 
-/* =========================
+/* =========================================================
    SIDEBAR
-========================= */
+========================================================= */
 
 .sidebar {
 
@@ -349,6 +353,8 @@ nav a:hover {
 
     border:
         1px solid #e0eeee;
+
+    height: fit-content;
 }
 
 
@@ -407,9 +413,9 @@ nav a:hover {
 }
 
 
-/* =========================
+/* =========================================================
    LAYER LEGEND
-========================= */
+========================================================= */
 
 .layer-list {
 
@@ -444,26 +450,23 @@ nav a:hover {
 
 
 .coral {
-
     background: #ef8c9b;
 }
 
 
 .seagrass {
-
     background: #73b66b;
 }
 
 
 .current {
-
     background: #4389d9;
 }
 
 
-/* =========================
+/* =========================================================
    MAP PANEL
-========================= */
+========================================================= */
 
 .map-panel {
 
@@ -514,9 +517,9 @@ nav a:hover {
 }
 
 
-/* =========================
+/* =========================================================
    MAP TOOLS
-========================= */
+========================================================= */
 
 .map-tools {
 
@@ -577,9 +580,9 @@ nav a:hover {
 }
 
 
-/* =========================
+/* =========================================================
    LEAFLET MAP
-========================= */
+========================================================= */
 
 #interactive-map {
 
@@ -595,9 +598,9 @@ nav a:hover {
 }
 
 
-/* =========================
+/* =========================================================
    INFO PANEL
-========================= */
+========================================================= */
 
 .info-panel {
 
@@ -630,9 +633,135 @@ nav a:hover {
 }
 
 
-/* =========================
+/* =========================================================
+   GOOGLE SATELLITE
+========================================================= */
+
+.google-earth-card {
+
+    background: white;
+
+    border-radius: 14px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(20,70,75,0.08);
+
+    border:
+        1px solid #e0eeee;
+}
+
+
+.google-earth-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 15px;
+
+    gap: 15px;
+}
+
+
+.google-earth-header h3 {
+
+    font-size: 19px;
+
+    color: #173b43;
+}
+
+
+.google-earth-header p {
+
+    margin-top: 5px;
+
+    font-size: 12px;
+
+    color: #71868a;
+}
+
+
+.satellite-status {
+
+    background: #edf8f9;
+
+    color: #087f8c;
+
+    padding: 7px 11px;
+
+    border-radius: 15px;
+
+    font-size: 11px;
+}
+
+
+#google-map {
+
+    width: 100%;
+
+    height: 600px;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    background: #dcebed;
+}
+
+
+.google-earth-info {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 15px;
+
+    margin-top: 15px;
+}
+
+
+.google-earth-info div {
+
+    background: #f5fafb;
+
+    padding: 15px;
+
+    border-radius: 8px;
+}
+
+
+.google-earth-info strong {
+
+    display: block;
+
+    font-size: 11px;
+
+    color: #71868a;
+
+    text-transform: uppercase;
+
+    margin-bottom: 5px;
+}
+
+
+.google-earth-info span {
+
+    font-size: 13px;
+
+    color: #24565e;
+}
+
+
+/* =========================================================
    ANALYSIS
-========================= */
+========================================================= */
 
 .analysis-grid {
 
@@ -668,9 +797,9 @@ nav a:hover {
 }
 
 
-/* =========================
+/* =========================================================
    BAR CHART
-========================= */
+========================================================= */
 
 .bar-chart {
 
@@ -745,9 +874,9 @@ nav a:hover {
 }
 
 
-/* =========================
-   CHANGE LIST
-========================= */
+/* =========================================================
+   TEMPORAL CHANGE
+========================================================= */
 
 .change-list {
 
@@ -787,9 +916,9 @@ nav a:hover {
 }
 
 
-/* =========================
+/* =========================================================
    OCEAN CURRENT
-========================= */
+========================================================= */
 
 .current-section {
 
@@ -802,7 +931,7 @@ nav a:hover {
 
     color: white;
 
-    padding: 45px 30px;
+    padding: 50px 30px;
 }
 
 
@@ -921,9 +1050,9 @@ nav a:hover {
 }
 
 
-/* =========================
+/* =========================================================
    METHODOLOGY
-========================= */
+========================================================= */
 
 .method-grid {
 
@@ -998,9 +1127,9 @@ nav a:hover {
 }
 
 
-/* =========================
+/* =========================================================
    METADATA
-========================= */
+========================================================= */
 
 .metadata-table {
 
@@ -1048,9 +1177,9 @@ nav a:hover {
 }
 
 
-/* =========================
+/* =========================================================
    ABOUT
-========================= */
+========================================================= */
 
 .about-box {
 
@@ -1079,9 +1208,9 @@ nav a:hover {
 }
 
 
-/* =========================
+/* =========================================================
    FOOTER
-========================= */
+========================================================= */
 
 footer {
 
@@ -1112,12 +1241,14 @@ footer {
     opacity: 0.7;
 
     line-height: 1.7;
+
+    margin-bottom: 5px;
 }
 
 
-/* =========================
+/* =========================================================
    RESPONSIVE
-========================= */
+========================================================= */
 
 @media(max-width:1000px) {
 
@@ -1170,6 +1301,8 @@ footer {
 
         width:100%;
 
+        justify-content:flex-start;
+
     }
 
     .hero h2 {
@@ -1198,6 +1331,18 @@ footer {
 
     }
 
+    #google-map {
+
+        height:450px;
+
+    }
+
+    .google-earth-info {
+
+        grid-template-columns:1fr;
+
+    }
+
     .current-section {
 
         padding:35px 18px;
@@ -1214,9 +1359,9 @@ footer {
 <body>
 
 
-<!-- =========================
+<!-- =========================================================
      HEADER
-========================= -->
+========================================================= -->
 
 <header>
 
@@ -1245,6 +1390,10 @@ footer {
             Temporal
         </a>
 
+        <a href="#google-earth">
+            Satellite
+        </a>
+
         <a href="#analysis">
             Analysis
         </a>
@@ -1264,9 +1413,9 @@ footer {
 </header>
 
 
-<!-- =========================
+<!-- =========================================================
      HERO
-========================= -->
+========================================================= -->
 
 <section class="hero">
 
@@ -1290,9 +1439,10 @@ footer {
 
     <p>
 
-        An interactive spatial data portal designed to visualize
-        marine ecosystem distribution, temporal changes, and
-        oceanographic information through GIS and remote sensing.
+        An interactive spatial data portal designed to
+        visualize marine ecosystem distribution, temporal
+        changes, satellite imagery, and oceanographic
+        information through GIS and remote sensing.
 
     </p>
 
@@ -1304,9 +1454,9 @@ footer {
 <main class="container">
 
 
-<!-- =========================
+<!-- =========================================================
      OVERVIEW
-========================= -->
+========================================================= -->
 
 <section id="overview" class="section">
 
@@ -1389,15 +1539,15 @@ footer {
 <div class="card">
 
     <div class="card-label">
-        Ocean Current
+        Spatial Explorer
     </div>
 
     <div class="card-value">
-        Ready
+        Live
     </div>
 
     <div class="card-description">
-        Integration stage
+        Interactive satellite map
     </div>
 
 </div>
@@ -1408,9 +1558,9 @@ footer {
 </section>
 
 
-<!-- =========================
+<!-- =========================================================
      TEMPORAL WEBGIS
-========================= -->
+========================================================= -->
 
 <section id="temporal" class="section">
 
@@ -1491,9 +1641,7 @@ footer {
 
         <div class="layer-item">
 
-            <span
-                class="legend-box coral">
-            </span>
+            <span class="legend-box coral"></span>
 
             Coral Reef
 
@@ -1502,9 +1650,7 @@ footer {
 
         <div class="layer-item">
 
-            <span
-                class="legend-box seagrass">
-            </span>
+            <span class="legend-box seagrass"></span>
 
             Seagrass
 
@@ -1513,9 +1659,7 @@ footer {
 
         <div class="layer-item">
 
-            <span
-                class="legend-box current">
-            </span>
+            <span class="legend-box current"></span>
 
             Ocean Current
 
@@ -1537,9 +1681,8 @@ footer {
             line-height:1.6;
             ">
 
-            Use the mouse wheel or
-            +/- buttons to zoom.
-            Drag the map to pan around
+            Use the mouse wheel or +/- buttons
+            to zoom. Drag the map to pan around
             the spatial dataset.
 
         </p>
@@ -1609,8 +1752,6 @@ footer {
     </div>
 
 
-    <!-- LEAFLET MAP -->
-
     <div id="interactive-map"></div>
 
 
@@ -1647,9 +1788,106 @@ footer {
 </section>
 
 
-<!-- =========================
+<!-- =========================================================
+     GOOGLE SATELLITE EXPLORER
+========================================================= -->
+
+<section id="google-earth" class="section">
+
+<div class="section-title">
+
+    <h2>
+        Google Satellite Explorer
+    </h2>
+
+    <p>
+        Explore the surrounding study area using
+        interactive satellite imagery as a spatial reference.
+    </p>
+
+</div>
+
+
+<div class="google-earth-card">
+
+
+    <div class="google-earth-header">
+
+        <div>
+
+            <h3>
+                🛰️ Interactive Satellite Map
+            </h3>
+
+            <p>
+                Google Satellite imagery
+            </p>
+
+        </div>
+
+
+        <div class="satellite-status">
+            Interactive
+        </div>
+
+    </div>
+
+
+    <div id="google-map"></div>
+
+
+    <div class="google-earth-info">
+
+
+        <div>
+
+            <strong>
+                Map Type
+            </strong>
+
+            <span>
+                Satellite
+            </span>
+
+        </div>
+
+
+        <div>
+
+            <strong>
+                Interaction
+            </strong>
+
+            <span>
+                Zoom • Pan • Fullscreen
+            </span>
+
+        </div>
+
+
+        <div>
+
+            <strong>
+                Purpose
+            </strong>
+
+            <span>
+                Spatial reference
+            </span>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
      SPATIAL ANALYSIS
-========================= -->
+========================================================= -->
 
 <section id="analysis" class="section">
 
@@ -1834,9 +2072,9 @@ footer {
 </main>
 
 
-<!-- =========================
+<!-- =========================================================
      OCEAN CURRENT
-========================= -->
+========================================================= -->
 
 <section id="current" class="current-section">
 
@@ -1968,9 +2206,9 @@ footer {
 <main class="container">
 
 
-<!-- =========================
+<!-- =========================================================
      METHODOLOGY
-========================= -->
+========================================================= -->
 
 <section id="methodology" class="section">
 
@@ -1981,9 +2219,8 @@ footer {
     </h2>
 
     <p>
-        General workflow used to transform
-        spatial datasets into an interactive
-        WebGIS visualization.
+        General workflow used to transform spatial
+        datasets into an interactive WebGIS visualization.
     </p>
 
 </div>
@@ -2105,9 +2342,9 @@ footer {
 </section>
 
 
-<!-- =========================
+<!-- =========================================================
      METADATA
-========================= -->
+========================================================= -->
 
 <section class="section">
 
@@ -2242,6 +2479,27 @@ footer {
 <tr>
 
     <td>
+        Google Satellite Imagery
+    </td>
+
+    <td>
+        Current imagery
+    </td>
+
+    <td>
+        Online basemap
+    </td>
+
+    <td>
+        Spatial reference
+    </td>
+
+</tr>
+
+
+<tr>
+
+    <td>
         Ocean Current
     </td>
 
@@ -2267,9 +2525,9 @@ footer {
 </section>
 
 
-<!-- =========================
+<!-- =========================================================
      ABOUT
-========================= -->
+========================================================= -->
 
 <section class="section">
 
@@ -2298,9 +2556,10 @@ footer {
     <p>
 
         The platform combines GIS, remote sensing,
-        spatial analysis, and web-based visualization
-        to make marine spatial information easier
-        to explore and communicate.
+        spatial analysis, satellite imagery, and
+        web-based visualization to make marine
+        spatial information easier to explore
+        and communicate.
 
     </p>
 
@@ -2323,9 +2582,9 @@ footer {
 </main>
 
 
-<!-- =========================
+<!-- =========================================================
      FOOTER
-========================= -->
+========================================================= -->
 
 <footer>
 
@@ -2349,9 +2608,9 @@ footer {
 </footer>
 
 
-<!-- =========================
+<!-- =========================================================
      LEAFLET JS
-========================= -->
+========================================================= -->
 
 <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
@@ -2360,19 +2619,9 @@ footer {
 
 <script>
 
-/* =========================================
-   WEBGIS CONFIGURATION
-========================================= */
-
-
-/*
-    Current datasets are PNG images.
-
-    Leaflet CRS.Simple is used because
-    the current PNG files have not yet
-    been georeferenced.
-*/
-
+/* =========================================================
+   DATA CONFIGURATION
+========================================================= */
 
 const imageData = {
 
@@ -2387,10 +2636,6 @@ const imageData = {
 };
 
 
-/*
-    Coral reef area information
-*/
-
 const coralArea = {
 
     2021: "27.50 km²",
@@ -2404,9 +2649,9 @@ const coralArea = {
 };
 
 
-/* =========================================
+/* =========================================================
    GLOBAL VARIABLES
-========================================= */
+========================================================= */
 
 let map = null;
 
@@ -2417,12 +2662,11 @@ let currentBounds = null;
 let currentYear = 2021;
 
 
-/* =========================================
-   INITIALIZE MAP
-========================================= */
+/* =========================================================
+   INITIALIZE LEAFLET MAP
+========================================================= */
 
 function initializeMap() {
-
 
     map = L.map(
         "interactive-map",
@@ -2445,12 +2689,11 @@ function initializeMap() {
 }
 
 
-/* =========================================
-   LOAD IMAGE INTO LEAFLET
-========================================= */
+/* =========================================================
+   LOAD PNG INTO LEAFLET
+========================================================= */
 
 function loadMapImage(year) {
-
 
     const imageUrl =
         imageData[year];
@@ -2462,7 +2705,6 @@ function loadMapImage(year) {
 
     image.onload = function() {
 
-
         const width =
             image.naturalWidth;
 
@@ -2470,10 +2712,6 @@ function loadMapImage(year) {
         const height =
             image.naturalHeight;
 
-
-        /*
-            Leaflet image bounds
-        */
 
         const bounds = [
 
@@ -2488,10 +2726,6 @@ function loadMapImage(year) {
             bounds;
 
 
-        /*
-            Remove previous layer
-        */
-
         if (currentOverlay) {
 
             map.removeLayer(
@@ -2500,11 +2734,6 @@ function loadMapImage(year) {
 
         }
 
-
-        /*
-            Add PNG as Leaflet
-            image overlay
-        */
 
         currentOverlay =
             L.imageOverlay(
@@ -2524,22 +2753,13 @@ function loadMapImage(year) {
             ).addTo(map);
 
 
-        /*
-            Fit map to image
-        */
-
         map.fitBounds(
             bounds
         );
 
 
-        /*
-            Save current year
-        */
-
         currentYear =
             year;
-
 
     };
 
@@ -2560,50 +2780,32 @@ function loadMapImage(year) {
     };
 
 
-    /*
-        Start loading image
-    */
-
     image.src =
         imageUrl;
 
 }
 
 
-/* =========================================
-   CHANGE TEMPORAL MAP
-========================================= */
+/* =========================================================
+   CHANGE YEAR
+========================================================= */
 
 function changeMap(
     year,
     button
 ) {
 
-
-    /*
-        Load selected map
-    */
-
     loadMapImage(
         year
     );
 
 
-    /*
-        Update map title
-    */
-
     document.getElementById(
         "map-title"
     ).innerText =
-
         "Spatial Distribution — " +
         year;
 
-
-    /*
-        Update temporal reference
-    */
 
     document.getElementById(
         "year-title"
@@ -2611,29 +2813,17 @@ function changeMap(
         year;
 
 
-    /*
-        Update dashboard
-    */
-
     document.getElementById(
         "dashboard-year"
     ).innerText =
         year;
 
 
-    /*
-        Update coral reef area
-    */
-
     document.getElementById(
         "coral-area"
     ).innerText =
         coralArea[year];
 
-
-    /*
-        Update active button
-    */
 
     const buttons =
         document.querySelectorAll(
@@ -2659,12 +2849,11 @@ function changeMap(
 }
 
 
-/* =========================================
-   RESET MAP
-========================================= */
+/* =========================================================
+   RESET LEAFLET MAP
+========================================================= */
 
 function resetMapView() {
-
 
     if (
         map &&
@@ -2680,12 +2869,11 @@ function resetMapView() {
 }
 
 
-/* =========================================
-   FULLSCREEN
-========================================= */
+/* =========================================================
+   LEAFLET FULLSCREEN
+========================================================= */
 
 function toggleFullscreen() {
-
 
     const mapElement =
         document.getElementById(
@@ -2697,7 +2885,6 @@ function toggleFullscreen() {
         !document.fullscreenElement
     ) {
 
-
         if (
             mapElement.requestFullscreen
         ) {
@@ -2706,26 +2893,22 @@ function toggleFullscreen() {
 
         }
 
-
     } else {
-
 
         document.exitFullscreen();
 
     }
 
-
 }
 
 
-/* =========================================
+/* =========================================================
    FIX LEAFLET AFTER FULLSCREEN
-========================================= */
+========================================================= */
 
 document.addEventListener(
     "fullscreenchange",
     function() {
-
 
         setTimeout(
             function() {
@@ -2744,9 +2927,93 @@ document.addEventListener(
 );
 
 
-/* =========================================
+/* =========================================================
+   GOOGLE SATELLITE MAP
+========================================================= */
+
+function initGoogleMap() {
+
+    /*
+       GANTI KOORDINAT INI DENGAN
+       KOORDINAT LOKASI STUDI KAMU
+    */
+
+    const studyArea = {
+
+        lat: -5.50,
+
+        lng: 120.50
+
+    };
+
+
+    const googleMap =
+        new google.maps.Map(
+
+            document.getElementById(
+                "google-map"
+            ),
+
+            {
+
+                center:
+                    studyArea,
+
+                zoom:
+                    8,
+
+                mapTypeId:
+                    "satellite",
+
+                fullscreenControl:
+                    true,
+
+                zoomControl:
+                    true,
+
+                mapTypeControl:
+                    true,
+
+                streetViewControl:
+                    true,
+
+                rotateControl:
+                    true,
+
+                scaleControl:
+                    true,
+
+                gestureHandling:
+                    "greedy"
+
+            }
+
+        );
+
+
+    /*
+       MARKER LOKASI STUDI
+    */
+
+    new google.maps.Marker({
+
+        position:
+            studyArea,
+
+        map:
+            googleMap,
+
+        title:
+            "Study Area"
+
+    });
+
+}
+
+
+/* =========================================================
    START APPLICATION
-========================================= */
+========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -2757,6 +3024,16 @@ document.addEventListener(
     }
 );
 
+</script>
+
+
+<!-- =========================================================
+     GOOGLE MAPS JAVASCRIPT API
+========================================================= -->
+
+<script
+    async
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&loading=async&callback=initGoogleMap">
 </script>
 
 
