@@ -10,16 +10,6 @@
 <title>Marine Spatial Data Portal</title>
 
 
-<!-- =========================
-     LEAFLET CSS
-========================= -->
-
-<link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
-
-
 <style>
 
 /* =========================================================
@@ -321,7 +311,7 @@ nav a:hover {
 
 
 /* =========================================================
-   TEMPORAL MAP LAYOUT
+   MAP LAYOUT
 ========================================================= */
 
 .map-layout {
@@ -450,17 +440,23 @@ nav a:hover {
 
 
 .coral {
+
     background: #ef8c9b;
+
 }
 
 
 .seagrass {
+
     background: #73b66b;
+
 }
 
 
 .current {
+
     background: #4389d9;
+
 }
 
 
@@ -494,6 +490,8 @@ nav a:hover {
     align-items: center;
 
     margin-bottom: 15px;
+
+    gap: 15px;
 }
 
 
@@ -514,6 +512,8 @@ nav a:hover {
     padding: 7px 10px;
 
     border-radius: 15px;
+
+    white-space: nowrap;
 }
 
 
@@ -544,6 +544,8 @@ nav a:hover {
     gap: 8px;
 
     align-items: center;
+
+    flex-wrap: wrap;
 }
 
 
@@ -581,7 +583,7 @@ nav a:hover {
 
 
 /* =========================================================
-   LEAFLET MAP
+   GOOGLE MAP
 ========================================================= */
 
 #interactive-map {
@@ -630,132 +632,6 @@ nav a:hover {
     line-height: 1.6;
 
     color: #5d7074;
-}
-
-
-/* =========================================================
-   GOOGLE SATELLITE
-========================================================= */
-
-.google-earth-card {
-
-    background: white;
-
-    border-radius: 14px;
-
-    padding: 20px;
-
-    box-shadow:
-        0 5px 20px
-        rgba(20,70,75,0.08);
-
-    border:
-        1px solid #e0eeee;
-}
-
-
-.google-earth-header {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 15px;
-
-    gap: 15px;
-}
-
-
-.google-earth-header h3 {
-
-    font-size: 19px;
-
-    color: #173b43;
-}
-
-
-.google-earth-header p {
-
-    margin-top: 5px;
-
-    font-size: 12px;
-
-    color: #71868a;
-}
-
-
-.satellite-status {
-
-    background: #edf8f9;
-
-    color: #087f8c;
-
-    padding: 7px 11px;
-
-    border-radius: 15px;
-
-    font-size: 11px;
-}
-
-
-#google-map {
-
-    width: 100%;
-
-    height: 600px;
-
-    border-radius: 10px;
-
-    overflow: hidden;
-
-    background: #dcebed;
-}
-
-
-.google-earth-info {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3,1fr);
-
-    gap: 15px;
-
-    margin-top: 15px;
-}
-
-
-.google-earth-info div {
-
-    background: #f5fafb;
-
-    padding: 15px;
-
-    border-radius: 8px;
-}
-
-
-.google-earth-info strong {
-
-    display: block;
-
-    font-size: 11px;
-
-    color: #71868a;
-
-    text-transform: uppercase;
-
-    margin-bottom: 5px;
-}
-
-
-.google-earth-info span {
-
-    font-size: 13px;
-
-    color: #24565e;
 }
 
 
@@ -1331,18 +1207,6 @@ footer {
 
     }
 
-    #google-map {
-
-        height:450px;
-
-    }
-
-    .google-earth-info {
-
-        grid-template-columns:1fr;
-
-    }
-
     .current-section {
 
         padding:35px 18px;
@@ -1387,11 +1251,7 @@ footer {
         </a>
 
         <a href="#temporal">
-            Temporal
-        </a>
-
-        <a href="#google-earth">
-            Satellite
+            WebGIS
         </a>
 
         <a href="#analysis">
@@ -1547,7 +1407,7 @@ footer {
     </div>
 
     <div class="card-description">
-        Interactive satellite map
+        Satellite basemap
     </div>
 
 </div>
@@ -1572,7 +1432,8 @@ footer {
 
     <p>
         Explore marine ecosystem maps across different
-        temporal datasets using the interactive map.
+        temporal datasets directly on an interactive
+        satellite basemap.
     </p>
 
 </div>
@@ -1581,7 +1442,9 @@ footer {
 <div class="map-layout">
 
 
-<!-- SIDEBAR -->
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
 
 <div class="sidebar">
 
@@ -1590,7 +1453,9 @@ footer {
     </h3>
 
 
-    <div class="year-buttons">
+    <div
+        id="temporal-buttons"
+        class="year-buttons">
 
 
         <button
@@ -1632,6 +1497,49 @@ footer {
     </div>
 
 
+    <!-- =================================================
+         BASEMAP
+    ================================================== -->
+
+    <div class="layer-list">
+
+        <h3>
+            Basemap
+        </h3>
+
+
+        <div
+            id="basemap-buttons"
+            class="year-buttons">
+
+
+            <button
+                class="year-button active"
+                onclick="setBasemap('satellite', this)">
+
+                🛰️ Satellite
+
+            </button>
+
+
+            <button
+                class="year-button"
+                onclick="setBasemap('roadmap', this)">
+
+                🗺️ Road Map
+
+            </button>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         LEGEND
+    ================================================== -->
+
     <div class="layer-list">
 
         <h3>
@@ -1641,7 +1549,9 @@ footer {
 
         <div class="layer-item">
 
-            <span class="legend-box coral"></span>
+            <span
+                class="legend-box coral">
+            </span>
 
             Coral Reef
 
@@ -1650,7 +1560,9 @@ footer {
 
         <div class="layer-item">
 
-            <span class="legend-box seagrass"></span>
+            <span
+                class="legend-box seagrass">
+            </span>
 
             Seagrass
 
@@ -1659,7 +1571,9 @@ footer {
 
         <div class="layer-item">
 
-            <span class="legend-box current"></span>
+            <span
+                class="legend-box current">
+            </span>
 
             Ocean Current
 
@@ -1668,22 +1582,26 @@ footer {
     </div>
 
 
+    <!-- =================================================
+         INTERACTION
+    ================================================== -->
+
     <div class="layer-list">
 
         <h3>
             Map Interaction
         </h3>
 
-        <p
-            style="
+
+        <p style="
             font-size:12px;
             color:#71868a;
             line-height:1.6;
-            ">
+        ">
 
-            Use the mouse wheel or +/- buttons
-            to zoom. Drag the map to pan around
-            the spatial dataset.
+            Use zoom and pan to explore the
+            study area. Select a year to change
+            the marine ecosystem overlay.
 
         </p>
 
@@ -1692,7 +1610,9 @@ footer {
 </div>
 
 
-<!-- MAP -->
+<!-- =====================================================
+     MAP PANEL
+===================================================== -->
 
 <div class="map-panel">
 
@@ -1708,7 +1628,7 @@ footer {
 
         <span class="status">
 
-            Interactive WebGIS
+            Google Satellite • WebGIS
 
         </span>
 
@@ -1738,19 +1658,21 @@ footer {
 
             </button>
 
-
         </div>
 
 
         <div class="map-note">
 
-            Zoom • Pan • Temporal Layer
+            Zoom • Pan • Satellite • Temporal Overlay
 
         </div>
 
-
     </div>
 
+
+    <!-- =================================================
+         GOOGLE SATELLITE + TEMPORAL OVERLAY
+    ================================================== -->
 
     <div id="interactive-map"></div>
 
@@ -1769,12 +1691,10 @@ footer {
 
         <p>
 
-            Select another year from the temporal
-            layer panel to explore the corresponding
-            marine ecosystem spatial dataset.
-
-            The map can be zoomed and panned for
-            closer spatial inspection.
+            The selected marine ecosystem map is displayed
+            as a spatial overlay on the interactive satellite
+            basemap. Use the temporal controls to compare
+            ecosystem distribution between available years.
 
         </p>
 
@@ -1782,103 +1702,6 @@ footer {
 
 
 </div>
-
-</div>
-
-</section>
-
-
-<!-- =========================================================
-     GOOGLE SATELLITE EXPLORER
-========================================================= -->
-
-<section id="google-earth" class="section">
-
-<div class="section-title">
-
-    <h2>
-        Google Satellite Explorer
-    </h2>
-
-    <p>
-        Explore the surrounding study area using
-        interactive satellite imagery as a spatial reference.
-    </p>
-
-</div>
-
-
-<div class="google-earth-card">
-
-
-    <div class="google-earth-header">
-
-        <div>
-
-            <h3>
-                🛰️ Interactive Satellite Map
-            </h3>
-
-            <p>
-                Google Satellite imagery
-            </p>
-
-        </div>
-
-
-        <div class="satellite-status">
-            Interactive
-        </div>
-
-    </div>
-
-
-    <div id="google-map"></div>
-
-
-    <div class="google-earth-info">
-
-
-        <div>
-
-            <strong>
-                Map Type
-            </strong>
-
-            <span>
-                Satellite
-            </span>
-
-        </div>
-
-
-        <div>
-
-            <strong>
-                Interaction
-            </strong>
-
-            <span>
-                Zoom • Pan • Fullscreen
-            </span>
-
-        </div>
-
-
-        <div>
-
-            <strong>
-                Purpose
-            </strong>
-
-            <span>
-                Spatial reference
-            </span>
-
-        </div>
-
-
-    </div>
 
 </div>
 
@@ -1908,7 +1731,9 @@ footer {
 <div class="analysis-grid">
 
 
-<!-- BAR CHART -->
+<!-- =====================================================
+     BAR CHART
+===================================================== -->
 
 <div class="analysis-card">
 
@@ -1997,7 +1822,9 @@ footer {
 </div>
 
 
-<!-- CHANGE -->
+<!-- =====================================================
+     TEMPORAL CHANGE
+===================================================== -->
 
 <div class="analysis-card">
 
@@ -2065,6 +1892,7 @@ footer {
 
 </div>
 
+
 </div>
 
 </section>
@@ -2076,7 +1904,10 @@ footer {
      OCEAN CURRENT
 ========================================================= -->
 
-<section id="current" class="current-section">
+<section
+    id="current"
+    class="current-section">
+
 
 <div class="current-content">
 
@@ -2092,9 +1923,9 @@ footer {
 
     <p style="color:rgba(255,255,255,0.75);">
 
-        A dedicated section for integrating
-        ocean current information into marine
-        ecosystem spatial analysis.
+        A dedicated section for future integration
+        of ocean current information into the
+        marine ecosystem spatial analysis.
 
     </p>
 
@@ -2123,12 +1954,10 @@ footer {
         <p>
 
             This section is prepared for integration
-            with ocean current data.
-
-            Future development can display
-            current velocity, direction, and
-            temporal information on an
-            interactive map.
+            of ocean current data. Future development
+            can display current velocity, direction,
+            and temporal information directly within
+            the WebGIS.
 
         </p>
 
@@ -2210,7 +2039,10 @@ footer {
      METHODOLOGY
 ========================================================= -->
 
-<section id="methodology" class="section">
+<section
+    id="methodology"
+    class="section">
+
 
 <div class="section-title">
 
@@ -2329,7 +2161,7 @@ footer {
         </li>
 
         <li>
-            Interactive dashboard
+            Interactive satellite basemap
         </li>
 
     </ul>
@@ -2348,6 +2180,7 @@ footer {
 
 <section class="section">
 
+
 <div class="section-title">
 
     <h2>
@@ -2361,6 +2194,8 @@ footer {
 
 </div>
 
+
+<div style="overflow-x:auto;">
 
 <table class="metadata-table">
 
@@ -2522,6 +2357,8 @@ footer {
 
 </table>
 
+</div>
+
 </section>
 
 
@@ -2530,6 +2367,7 @@ footer {
 ========================================================= -->
 
 <section class="section">
+
 
 <div class="section-title">
 
@@ -2609,11 +2447,12 @@ footer {
 
 
 <!-- =========================================================
-     LEAFLET JS
+     GOOGLE MAPS API
 ========================================================= -->
 
 <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    async
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&loading=async&callback=initGoogleMap">
 </script>
 
 
@@ -2653,135 +2492,165 @@ const coralArea = {
    GLOBAL VARIABLES
 ========================================================= */
 
-let map = null;
+let googleMap = null;
 
 let currentOverlay = null;
-
-let currentBounds = null;
 
 let currentYear = 2021;
 
 
 /* =========================================================
-   INITIALIZE LEAFLET MAP
+   STUDY AREA BOUNDING BOX
+=========================================================
+
+   IMPORTANT:
+
+   Koordinat di bawah MASIH CONTOH.
+
+   Ganti dengan extent sebenarnya dari
+   lokasi penelitian kamu.
+
 ========================================================= */
 
-function initializeMap() {
+const studyBounds = {
 
-    map = L.map(
-        "interactive-map",
-        {
+    north: -5.40,
 
-            crs: L.CRS.Simple,
+    south: -5.60,
 
-            minZoom: -5,
+    east: 120.60,
 
-            maxZoom: 5,
+    west: 120.40
 
-            zoomControl: true
+};
 
-        }
+
+/* =========================================================
+   STUDY CENTER
+========================================================= */
+
+const studyCenter = {
+
+    lat: -5.50,
+
+    lng: 120.50
+
+};
+
+
+/* =========================================================
+   INITIALIZE GOOGLE MAP
+========================================================= */
+
+function initGoogleMap() {
+
+    googleMap =
+        new google.maps.Map(
+
+            document.getElementById(
+                "interactive-map"
+            ),
+
+            {
+
+                center:
+                    studyCenter,
+
+                zoom:
+                    10,
+
+                mapTypeId:
+                    "satellite",
+
+                fullscreenControl:
+                    true,
+
+                zoomControl:
+                    true,
+
+                mapTypeControl:
+                    false,
+
+                streetViewControl:
+                    false,
+
+                scaleControl:
+                    true,
+
+                rotateControl:
+                    true,
+
+                gestureHandling:
+                    "greedy"
+
+            }
+
+        );
+
+
+    /*
+       Load default map
+    */
+
+    loadOverlay(
+        2021
     );
-
-
-    loadMapImage(2021);
 
 }
 
 
 /* =========================================================
-   LOAD PNG INTO LEAFLET
+   LOAD PNG OVERLAY
 ========================================================= */
 
-function loadMapImage(year) {
+function loadOverlay(year) {
 
     const imageUrl =
         imageData[year];
 
 
-    const image =
-        new Image();
+    /*
+       Remove old overlay
+    */
+
+    if (currentOverlay) {
+
+        currentOverlay.setMap(
+            null
+        );
+
+    }
 
 
-    image.onload = function() {
+    /*
+       Create new overlay
+    */
 
-        const width =
-            image.naturalWidth;
+    currentOverlay =
+        new google.maps.GroundOverlay(
 
+            imageUrl,
 
-        const height =
-            image.naturalHeight;
+            studyBounds,
 
+            {
 
-        const bounds = [
+                opacity: 0.75,
 
-            [0, 0],
+                clickable: false
 
-            [height, width]
+            }
 
-        ];
-
-
-        currentBounds =
-            bounds;
-
-
-        if (currentOverlay) {
-
-            map.removeLayer(
-                currentOverlay
-            );
-
-        }
-
-
-        currentOverlay =
-            L.imageOverlay(
-
-                imageUrl,
-
-                bounds,
-
-                {
-
-                    opacity: 1,
-
-                    interactive: false
-
-                }
-
-            ).addTo(map);
-
-
-        map.fitBounds(
-            bounds
         );
 
 
-        currentYear =
-            year;
-
-    };
-
-
-    image.onerror = function() {
-
-        console.error(
-            "Unable to load:",
-            imageUrl
-        );
-
-        alert(
-            "Map " +
-            year +
-            " tidak dapat dimuat."
-        );
-
-    };
+    currentOverlay.setMap(
+        googleMap
+    );
 
 
-    image.src =
-        imageUrl;
+    currentYear =
+        year;
 
 }
 
@@ -2795,10 +2664,21 @@ function changeMap(
     button
 ) {
 
-    loadMapImage(
+    if (!googleMap) {
+
+        return;
+
+    }
+
+
+    loadOverlay(
         year
     );
 
+
+    /*
+       Update title
+    */
 
     document.getElementById(
         "map-title"
@@ -2807,11 +2687,19 @@ function changeMap(
         year;
 
 
+    /*
+       Update temporal reference
+    */
+
     document.getElementById(
         "year-title"
     ).innerText =
         year;
 
+
+    /*
+       Update dashboard
+    */
 
     document.getElementById(
         "dashboard-year"
@@ -2825,9 +2713,13 @@ function changeMap(
         coralArea[year];
 
 
+    /*
+       Update active year button
+    */
+
     const buttons =
         document.querySelectorAll(
-            ".year-button"
+            "#temporal-buttons .year-button"
         );
 
 
@@ -2850,27 +2742,81 @@ function changeMap(
 
 
 /* =========================================================
-   RESET LEAFLET MAP
+   CHANGE BASEMAP
 ========================================================= */
 
-function resetMapView() {
+function setBasemap(
+    type,
+    button
+) {
 
-    if (
-        map &&
-        currentBounds
-    ) {
+    if (!googleMap) {
 
-        map.fitBounds(
-            currentBounds
-        );
+        return;
 
     }
+
+
+    googleMap.setMapTypeId(
+        type
+    );
+
+
+    /*
+       Update active basemap button
+    */
+
+    const buttons =
+        document.querySelectorAll(
+            "#basemap-buttons .year-button"
+        );
+
+
+    buttons.forEach(
+        function(btn) {
+
+            btn.classList.remove(
+                "active"
+            );
+
+        }
+    );
+
+
+    button.classList.add(
+        "active"
+    );
 
 }
 
 
 /* =========================================================
-   LEAFLET FULLSCREEN
+   RESET VIEW
+========================================================= */
+
+function resetMapView() {
+
+    if (!googleMap) {
+
+        return;
+
+    }
+
+
+    googleMap.setCenter(
+        studyCenter
+    );
+
+
+    googleMap.setZoom(
+        10
+    );
+
+}
+
+
+/* =========================================================
+   FULLSCREEN
 ========================================================= */
 
 function toggleFullscreen() {
@@ -2893,7 +2839,9 @@ function toggleFullscreen() {
 
         }
 
-    } else {
+    }
+
+    else {
 
         document.exitFullscreen();
 
@@ -2903,7 +2851,7 @@ function toggleFullscreen() {
 
 
 /* =========================================================
-   FIX LEAFLET AFTER FULLSCREEN
+   FULLSCREEN RESIZE
 ========================================================= */
 
 document.addEventListener(
@@ -2913,9 +2861,12 @@ document.addEventListener(
         setTimeout(
             function() {
 
-                if (map) {
+                if (googleMap) {
 
-                    map.invalidateSize();
+                    google.maps.event.trigger(
+                        googleMap,
+                        "resize"
+                    );
 
                 }
 
@@ -2928,112 +2879,19 @@ document.addEventListener(
 
 
 /* =========================================================
-   GOOGLE SATELLITE MAP
+   GOOGLE MAP AUTH ERROR
 ========================================================= */
 
-function initGoogleMap() {
+window.gm_authFailure =
+function() {
 
-    /*
-       GANTI KOORDINAT INI DENGAN
-       KOORDINAT LOKASI STUDI KAMU
-    */
+    alert(
+        "Google Maps gagal dimuat. " +
+        "Periksa API Key Google Maps kamu."
+    );
 
-    const studyArea = {
+};
 
-        lat: -5.50,
-
-        lng: 120.50
-
-    };
-
-
-    const googleMap =
-        new google.maps.Map(
-
-            document.getElementById(
-                "google-map"
-            ),
-
-            {
-
-                center:
-                    studyArea,
-
-                zoom:
-                    8,
-
-                mapTypeId:
-                    "satellite",
-
-                fullscreenControl:
-                    true,
-
-                zoomControl:
-                    true,
-
-                mapTypeControl:
-                    true,
-
-                streetViewControl:
-                    true,
-
-                rotateControl:
-                    true,
-
-                scaleControl:
-                    true,
-
-                gestureHandling:
-                    "greedy"
-
-            }
-
-        );
-
-
-    /*
-       MARKER LOKASI STUDI
-    */
-
-    new google.maps.Marker({
-
-        position:
-            studyArea,
-
-        map:
-            googleMap,
-
-        title:
-            "Study Area"
-
-    });
-
-}
-
-
-/* =========================================================
-   START APPLICATION
-========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        initializeMap();
-
-    }
-);
-
-</script>
-
-
-<!-- =========================================================
-     GOOGLE MAPS JAVASCRIPT API
-========================================================= -->
-
-<script
-    async
-    src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&loading=async&callback=initGoogleMap">
 </script>
 
 
