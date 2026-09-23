@@ -1,2589 +1,1737 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Marine Spatial Data Portal</title>
-
-<!-- =========================================================
-     LEAFLET
-========================================================= -->
-
-<link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIINfQ3MZ5Hj4pQXz7Xj9D2bH5f5J5J5J5J="
-    crossorigin=""
-/>
-
-<style>
-
-/* =========================================================
-   GLOBAL
-========================================================= */
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f4f8f8;
-    color: #173b43;
-}
-
-button {
-    font-family: inherit;
-}
-
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-header {
-    background: linear-gradient(135deg, #063b43, #087f8c);
-    color: white;
-    padding: 18px 35px;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
-
-.header-container {
-    max-width: 1450px;
-    margin: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 25px;
-}
-
-.logo-area h1 {
-    font-size: 22px;
-}
-
-.logo-area p {
-    margin-top: 5px;
-    font-size: 12px;
-    opacity: 0.8;
-}
-
-nav {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-    padding: 8px 10px;
-    font-size: 12px;
-    border-radius: 6px;
-}
-
-nav a:hover {
-    background: rgba(255,255,255,0.15);
-}
-
-
-/* =========================================================
-   HERO
-========================================================= */
-
-.hero {
-    background: linear-gradient(135deg, #0b5964, #14a0ad);
-    color: white;
-    padding: 65px 30px;
-}
-
-.hero-content {
-    max-width: 1200px;
-    margin: auto;
-}
-
-.hero-tag {
-    display: inline-block;
-    background: rgba(255,255,255,0.15);
-    padding: 7px 12px;
-    border-radius: 20px;
-    font-size: 10px;
-    margin-bottom: 18px;
-}
-
-.hero h2 {
-    font-size: 40px;
-    max-width: 900px;
-    line-height: 1.15;
-}
-
-.hero p {
-    margin-top: 18px;
-    max-width: 850px;
-    line-height: 1.7;
-    font-size: 15px;
-    opacity: 0.9;
-}
-
-
-/* =========================================================
-   CONTAINER
-========================================================= */
-
-.container {
-    max-width: 1450px;
-    margin: auto;
-    padding: 40px 30px;
-}
-
-.section {
-    margin-bottom: 65px;
-}
-
-.section-title {
-    margin-bottom: 24px;
-}
-
-.section-title h2 {
-    color: #0b4f59;
-    font-size: 26px;
-}
-
-.section-title p {
-    margin-top: 8px;
-    color: #60777c;
-    line-height: 1.6;
-}
-
-
-/* =========================================================
-   DASHBOARD
-========================================================= */
-
-.dashboard {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-}
-
-.card {
-    background: white;
-    padding: 22px;
-    border-radius: 13px;
-    border: 1px solid #e0eeee;
-    box-shadow: 0 5px 20px rgba(20,70,75,0.07);
-}
-
-.card-label {
-    font-size: 10px;
-    color: #71868a;
-    text-transform: uppercase;
-    letter-spacing: 0.7px;
-}
-
-.card-value {
-    margin-top: 8px;
-    font-size: 27px;
-    font-weight: bold;
-    color: #087f8c;
-}
-
-.card-description {
-    margin-top: 7px;
-    font-size: 11px;
-    color: #74878b;
-}
-
-
-/* =========================================================
-   WEBGIS
-========================================================= */
-
-.webgis {
-    background: white;
-    border: 1px solid #dceced;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 7px 25px rgba(20,70,75,0.10);
-}
-
-.webgis-header {
-    padding: 17px 20px;
-    border-bottom: 1px solid #e2eeee;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-}
-
-.webgis-header h3 {
-    font-size: 18px;
-}
-
-.webgis-status {
-    background: #edf8f9;
-    color: #087f8c;
-    padding: 7px 10px;
-    border-radius: 15px;
-    font-size: 10px;
-}
-
-
-/* =========================================================
-   MAP BODY
-========================================================= */
-
-.webgis-body {
-    display: grid;
-    grid-template-columns: 270px 1fr;
-    min-height: 650px;
-}
-
-
-/* =========================================================
-   SIDEBAR
-========================================================= */
-
-.sidebar {
-    background: #fbfdfd;
-    border-right: 1px solid #e0eeee;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.sidebar-section {
-    margin-bottom: 28px;
-}
-
-.sidebar-section h4 {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: #547078;
-    margin-bottom: 12px;
-}
-
-
-/* =========================================================
-   TEMPORAL BUTTONS
-========================================================= */
-
-.year-group {
-    display: grid;
-    gap: 7px;
-}
-
-.year-button {
-    border: 1px solid #d2e2e4;
-    background: white;
-    color: #24565e;
-
-    padding: 10px 12px;
-    border-radius: 7px;
-
-    text-align: left;
-    cursor: pointer;
-
-    font-size: 12px;
-    transition: 0.2s;
-}
-
-.year-button:hover {
-    background: #edf8f9;
-}
-
-.year-button.active {
-    background: #087f8c;
-    border-color: #087f8c;
-    color: white;
-}
-
-.data-type {
-    margin-top: 7px;
-    font-size: 9px;
-    opacity: 0.75;
-}
-
-
-/* =========================================================
-   LAYER CHECKBOX
-========================================================= */
-
-.layer-option {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-
-    padding: 8px 0;
-
-    font-size: 12px;
-    color: #315960;
-}
-
-.layer-option input {
-    accent-color: #087f8c;
-}
-
-
-/* =========================================================
-   LEGEND
-========================================================= */
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    margin-bottom: 9px;
-
-    font-size: 12px;
-    color: #516d72;
-}
-
-.legend-box {
-    width: 15px;
-    height: 15px;
-    border-radius: 3px;
-}
-
-.coral {
-    background: #ef8c9b;
-}
-
-.seagrass {
-    background: #73b66b;
-}
-
-.current {
-    background: #4389d9;
-}
-
-
-/* =========================================================
-   OPACITY
-========================================================= */
-
-.opacity-label {
-    display: flex;
-    justify-content: space-between;
-
-    font-size: 11px;
-    margin-bottom: 8px;
-    color: #516d72;
-}
-
-.opacity-control input {
-    width: 100%;
-}
-
-
-/* =========================================================
-   MAP
-========================================================= */
-
-.map-area {
-    position: relative;
-    background: #dcebed;
-}
-
-#interactive-map {
-    width: 100%;
-    height: 650px;
-}
-
-
-/* =========================================================
-   LEAFLET CUSTOMIZATION
-========================================================= */
-
-.leaflet-container {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #dcebed;
-}
-
-.leaflet-control-zoom a {
-    color: #174c55;
-}
-
-
-/* =========================================================
-   MAP FLOATING CONTROL
-========================================================= */
-
-.map-control {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-
-    display: flex;
-    gap: 7px;
-
-    z-index: 1000;
-}
-
-.map-control button {
-    background: white;
-    border: 1px solid #d3e1e2;
-
-    padding: 8px 11px;
-    border-radius: 7px;
-
-    cursor: pointer;
-    font-size: 11px;
-
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-}
-
-.map-control button:hover {
-    background: #f0f8f9;
-}
-
-
-/* =========================================================
-   MAP INFO
-========================================================= */
-
-.map-info {
-    position: absolute;
-
-    bottom: 18px;
-    left: 18px;
-
-    background: rgba(255,255,255,0.95);
-
-    padding: 14px 16px;
-    border-radius: 9px;
-
-    min-width: 220px;
-
-    box-shadow: 0 3px 15px rgba(0,0,0,0.15);
-
-    z-index: 1000;
-}
-
-.map-info-title {
-    font-size: 14px;
-    font-weight: bold;
-    color: #174c55;
-}
-
-.map-info-subtitle {
-    margin-top: 4px;
-    font-size: 10px;
-    color: #71868a;
-}
-
-.map-info-value {
-    margin-top: 8px;
-    font-size: 18px;
-    font-weight: bold;
-    color: #087f8c;
-}
-
-
-/* =========================================================
-   LOADING
-========================================================= */
-
-.map-loading {
-    position: absolute;
-
-    top: 50%;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
-
-    background: white;
-
-    padding: 18px 22px;
-
-    border-radius: 9px;
-
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-
-    font-size: 12px;
-
-    z-index: 2000;
-}
-
-
-/* =========================================================
-   ANALYSIS
-========================================================= */
-
-.analysis-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.analysis-card {
-    background: white;
-    padding: 24px;
-    border-radius: 14px;
-    border: 1px solid #e0eeee;
-    box-shadow: 0 5px 20px rgba(20,70,75,0.07);
-}
-
-.analysis-card h3 {
-    margin-bottom: 20px;
-}
-
-
-/* =========================================================
-   BAR CHART
-========================================================= */
-
-.bar-chart {
-    height: 280px;
-
-    display: flex;
-    align-items: end;
-    justify-content: space-around;
-
-    border-bottom: 1px solid #ccdfe1;
-
-    padding: 20px 10px 0;
-}
-
-.bar-wrapper {
-    height: 100%;
-    width: 17%;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
-    align-items: center;
-}
-
-.bar {
-    width: 65%;
-    background: #087f8c;
-
-    border-radius: 5px 5px 0 0;
-
-    min-height: 10px;
-}
-
-.bar-value {
-    font-size: 11px;
-    margin-bottom: 5px;
-}
-
-.bar-year {
-    margin-top: 8px;
-    font-size: 11px;
-    color: #61767b;
-}
-
-
-/* =========================================================
-   CHANGE LIST
-========================================================= */
-
-.change-list {
-    display: grid;
-    gap: 12px;
-}
-
-.change-item {
-    background: #f5fafb;
-
-    padding: 14px;
-
-    border-radius: 8px;
-
-    display: flex;
-    justify-content: space-between;
-
-    font-size: 12px;
-}
-
-.change-value {
-    color: #087f8c;
-    font-weight: bold;
-}
-
-
-/* =========================================================
-   METHODOLOGY
-========================================================= */
-
-.method-grid {
-    display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 17px;
-}
-
-.method-card {
-    background: white;
-    border: 1px solid #e0eeee;
-    border-radius: 13px;
-    padding: 22px;
-}
-
-.method-number {
-    width: 34px;
-    height: 34px;
-
-    background: #e9f6f7;
-    color: #087f8c;
-
-    border-radius: 50%;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    font-weight: bold;
-    margin-bottom: 14px;
-}
-
-.method-card h3 {
-    font-size: 15px;
-    margin-bottom: 9px;
-}
-
-.method-card p,
-.method-card li {
-    font-size: 12px;
-    color: #63777b;
-    line-height: 1.6;
-}
-
-.method-card ul {
-    padding-left: 16px;
-}
-
-
-/* =========================================================
-   METADATA
-========================================================= */
-
-.metadata-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-
-    border-radius: 12px;
-    overflow: hidden;
-
-    box-shadow: 0 5px 20px rgba(20,70,75,0.06);
-}
-
-.metadata-table th,
-.metadata-table td {
-    padding: 14px;
-
-    border-bottom: 1px solid #e2eeee;
-
-    text-align: left;
-
-    font-size: 12px;
-}
-
-.metadata-table th {
-    background: #edf7f8;
-    color: #315960;
-}
-
-.metadata-table td {
-    color: #61767b;
-}
-
-
-/* =========================================================
-   ABOUT
-========================================================= */
-
-.about-box {
-    background: white;
-    padding: 28px;
-
-    border-radius: 13px;
-
-    border: 1px solid #e0eeee;
-
-    box-shadow: 0 5px 20px rgba(20,70,75,0.06);
-}
-
-.about-box p {
-    color: #60757a;
-    line-height: 1.8;
-    margin-bottom: 14px;
-}
-
-
-/* =========================================================
-   FOOTER
-========================================================= */
-
-footer {
-    background: #052f36;
-    color: white;
-
-    padding: 30px;
-
-    margin-top: 20px;
-}
-
-.footer-content {
-    max-width: 1200px;
-    margin: auto;
-    text-align: center;
-}
-
-.footer-content p {
-    font-size: 11px;
-    opacity: 0.7;
-    line-height: 1.7;
-}
-
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media(max-width:1000px) {
-
-    .dashboard {
-        grid-template-columns: repeat(2,1fr);
-    }
-
-    .method-grid {
-        grid-template-columns: repeat(2,1fr);
-    }
-
-    .webgis-body {
-        grid-template-columns: 220px 1fr;
-    }
-
-}
-
-@media(max-width:750px) {
-
-    header {
-        padding: 18px;
-    }
-
-    .header-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .hero h2 {
-        font-size: 30px;
-    }
-
-    .container {
-        padding: 30px 18px;
-    }
-
-    .dashboard,
-    .analysis-grid,
-    .method-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .webgis-body {
-        grid-template-columns: 1fr;
-    }
-
-    .sidebar {
-        border-right: none;
-        border-bottom: 1px solid #e0eeee;
-    }
-
-    #interactive-map {
-        height: 500px;
-    }
-
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Marine Spatial Data Portal</title>
+
+    <!-- Leaflet -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fa;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.96);
+            border-bottom: 1px solid #e5e7eb;
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: auto;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 700;
+            color: #0f766e;
+            font-size: 18px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 24px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: #0f766e;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            min-height: 480px;
+            background:
+                linear-gradient(
+                    rgba(0, 55, 65, 0.72),
+                    rgba(0, 55, 65, 0.72)
+                ),
+                url("./2021.png") center/cover;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: auto;
+            padding: 80px 24px;
+        }
+
+        .hero h1 {
+            font-size: clamp(36px, 5vw, 64px);
+            line-height: 1.1;
+            max-width: 850px;
+            margin-bottom: 24px;
+        }
+
+        .hero p {
+            max-width: 700px;
+            font-size: 18px;
+            opacity: 0.92;
+        }
+
+        /* =========================
+           GENERAL
+        ========================= */
+
+        section {
+            max-width: 1200px;
+            margin: auto;
+            padding: 80px 24px;
+        }
+
+        .section-title {
+            margin-bottom: 40px;
+        }
+
+        .section-title h2 {
+            font-size: 34px;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .section-title p {
+            color: #6b7280;
+        }
+
+        /* =========================
+           DASHBOARD
+        ========================= */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+        }
+
+        .stat-year {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 30px;
+            font-weight: 700;
+            color: #0f766e;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* =========================
+           WEBGIS
+        ========================= */
+
+        #webgis {
+            max-width: none;
+            background: #eef5f5;
+        }
+
+        .webgis-container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .map-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            background: white;
+            border: 1px solid #dfe5e7;
+            border-radius: 16px;
+            overflow: hidden;
+            min-height: 650px;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            padding: 24px;
+            border-right: 1px solid #e5e7eb;
+            background: #ffffff;
+        }
+
+        .sidebar h3 {
+            font-size: 17px;
+            margin-bottom: 16px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 28px;
+        }
+
+        .sidebar-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        /* YEAR BUTTONS */
+
+        .year-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .year-btn {
+            border: 1px solid #d1d5db;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .year-btn:hover {
+            border-color: #0f766e;
+        }
+
+        .year-btn.active {
+            background: #0f766e;
+            color: white;
+            border-color: #0f766e;
+        }
+
+        /* LAYERS */
+
+        .layer-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .layer-option input {
+            accent-color: #0f766e;
+        }
+
+        /* BASEMAP */
+
+        .basemap-option {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        /* OPACITY */
+
+        .opacity-control {
+            width: 100%;
+        }
+
+        /* MAP */
+
+        .map-wrapper {
+            position: relative;
+            min-width: 0;
+        }
+
+        #interactive-map {
+            width: 100%;
+            height: 650px;
+            background: #e5e7eb;
+        }
+
+        /* Loading */
+
+        .map-loading {
+            position: absolute;
+            inset: 0;
+            z-index: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f3f4f6;
+            color: #6b7280;
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .map-loading.hidden {
+            display: none;
+        }
+
+        /* MAP INFO */
+
+        .map-info {
+            position: absolute;
+            left: 16px;
+            bottom: 16px;
+            z-index: 700;
+            background: rgba(255,255,255,0.95);
+            border-radius: 10px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+            font-size: 13px;
+        }
+
+        .map-info strong {
+            color: #0f766e;
+        }
+
+        /* LEGEND */
+
+        .legend {
+            position: absolute;
+            right: 16px;
+            bottom: 16px;
+            z-index: 700;
+            background: rgba(255,255,255,0.95);
+            border-radius: 10px;
+            padding: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+            font-size: 12px;
+        }
+
+        .legend-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .legend-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .legend-box {
+            width: 18px;
+            height: 12px;
+            border: 1px solid #999;
+        }
+
+        /* =========================
+           ANALYSIS
+        ========================= */
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .analysis-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+        }
+
+        .analysis-card h3 {
+            margin-bottom: 20px;
+        }
+
+        .bar-row {
+            margin-bottom: 18px;
+        }
+
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .bar {
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: #0f766e;
+            border-radius: 20px;
+        }
+
+        /* =========================
+           CONTENT CARDS
+        ========================= */
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .content-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+        }
+
+        .content-card h3 {
+            margin-bottom: 12px;
+        }
+
+        .content-card p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* =========================
+           METADATA
+        ========================= */
+
+        .metadata {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .metadata th,
+        .metadata td {
+            text-align: left;
+            padding: 14px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        .metadata th {
+            background: #f9fafb;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            background: #0f2930;
+            color: white;
+            padding: 40px 24px;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .footer-inner p {
+            opacity: 0.75;
+            font-size: 14px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            nav ul {
+                display: none;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .map-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+            #interactive-map {
+                height: 550px;
+            }
+
+            .analysis-grid,
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            section {
+                padding: 60px 16px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #interactive-map {
+                height: 450px;
+            }
+        }
+    </style>
 </head>
-
 
 <body>
 
-
-<!-- =========================================================
-     HEADER
-========================================================= -->
+<!-- =========================
+     NAVBAR
+========================= -->
 
 <header>
+    <nav>
+        <div class="logo">
+            Marine Spatial Data Portal
+        </div>
 
-<div class="header-container">
+        <ul>
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#webgis">WebGIS</a></li>
+            <li><a href="#analysis">Analysis</a></li>
+            <li><a href="#methodology">Methodology</a></li>
+            <li><a href="#metadata">Metadata</a></li>
+        </ul>
+    </nav>
+</header>
 
-    <div class="logo-area">
 
-        <h1>🌊 Marine Spatial Data Portal</h1>
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <h1>
+            Spatial–Temporal Mapping of Coral Reef, Seagrass and Oceanographic Conditions
+        </h1>
 
         <p>
-            Coral Reef • Seagrass • Oceanographic Conditions
+            An interactive marine spatial data portal for exploring
+            temporal changes, projected coral reef distribution,
+            and associated oceanographic conditions.
         </p>
 
     </div>
 
-    <nav>
-
-        <a href="#overview">Overview</a>
-        <a href="#webgis">WebGIS</a>
-        <a href="#analysis">Analysis</a>
-        <a href="#methodology">Methodology</a>
-
-    </nav>
-
-</div>
-
-</header>
+</section>
 
 
-<!-- =========================================================
-     HERO
-========================================================= -->
+<!-- =========================
+     DASHBOARD
+========================= -->
 
-<section class="hero">
+<section id="dashboard">
 
-<div class="hero-content">
+    <div class="section-title">
+        <h2>Dashboard</h2>
 
-    <span class="hero-tag">
-        WEB GIS • REMOTE SENSING • MARINE ECOSYSTEM
-    </span>
+        <p>
+            Coral reef area across reference and projected periods.
+        </p>
+    </div>
 
-    <h2>
-        Spatial–Temporal Mapping of
-        Coral Reef and Seagrass Ecosystems
-    </h2>
+    <div class="dashboard-grid">
 
-    <p>
-        An interactive marine spatial data portal for
-        exploring ecosystem distribution, temporal
-        changes, satellite basemaps, and projected
-        ecosystem conditions.
-    </p>
+        <div class="stat-card">
+            <div class="stat-year">2021</div>
+            <div class="stat-value">27.50</div>
+            <div class="stat-label">Coral Reef Area (km²)</div>
+        </div>
 
-</div>
+        <div class="stat-card">
+            <div class="stat-year">2024</div>
+            <div class="stat-value">35.24</div>
+            <div class="stat-label">Coral Reef Area (km²)</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-year">2027</div>
+            <div class="stat-value">27.18</div>
+            <div class="stat-label">Projected Area (km²)</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-year">2030</div>
+            <div class="stat-value">30.17</div>
+            <div class="stat-label">Projected Area (km²)</div>
+        </div>
+
+    </div>
 
 </section>
 
 
-<main class="container">
-
-
-<!-- =========================================================
-     OVERVIEW
-========================================================= -->
-
-<section id="overview" class="section">
-
-<div class="section-title">
-
-    <h2>Marine Ecosystem Dashboard</h2>
-
-    <p>
-        Summary of the selected temporal dataset
-        displayed in the interactive WebGIS.
-    </p>
-
-</div>
-
-
-<div class="dashboard">
-
-
-<div class="card">
-
-    <div class="card-label">
-        Selected Year
-    </div>
-
-    <div
-        class="card-value"
-        id="dashboard-year">
-        2021
-    </div>
-
-    <div
-        class="card-description"
-        id="dashboard-type">
-        Observed / Reference
-    </div>
-
-</div>
-
-
-<div class="card">
-
-    <div class="card-label">
-        Coral Reef Area
-    </div>
-
-    <div
-        class="card-value"
-        id="coral-area">
-        27.50 km²
-    </div>
-
-    <div class="card-description">
-        Spatial extent
-    </div>
-
-</div>
-
-
-<div class="card">
-
-    <div class="card-label">
-        Data Source
-    </div>
-
-    <div
-        class="card-value"
-        style="font-size:19px;"
-        id="data-source">
-        Allen Coral Atlas
-    </div>
-
-    <div class="card-description">
-        Reference ecosystem map
-    </div>
-
-</div>
-
-
-<div class="card">
-
-    <div class="card-label">
-        Map Status
-    </div>
-
-    <div class="card-value">
-        Live
-    </div>
-
-    <div class="card-description">
-        Interactive WebGIS
-    </div>
-
-</div>
-
-
-</div>
-
-</section>
-
-
-<!-- =========================================================
+<!-- =========================
      WEBGIS
-========================================================= -->
+========================= -->
 
-<section id="webgis" class="section">
+<section id="webgis">
 
-<div class="section-title">
+    <div class="webgis-container">
 
-    <h2>Interactive Marine WebGIS</h2>
+        <div class="section-title">
+            <h2>Interactive WebGIS</h2>
 
-    <p>
-        Explore observed/reference ecosystem maps and
-        projected scenarios directly on an interactive
-        satellite basemap.
-    </p>
-
-</div>
-
-
-<div class="webgis">
-
-
-<div class="webgis-header">
-
-    <h3 id="map-title">
-        Spatial Distribution — 2021
-    </h3>
-
-    <span
-        class="webgis-status"
-        id="map-status">
-        OBSERVED • ALLEN CORAL ATLAS
-    </span>
-
-</div>
-
-
-<div class="webgis-body">
-
-
-<!-- =====================================================
-     SIDEBAR
-===================================================== -->
-
-<aside class="sidebar">
-
-
-<div class="sidebar-section">
-
-    <h4>Temporal Dataset</h4>
-
-    <div class="year-group">
-
-        <button
-            class="year-button active"
-            onclick="changeYear(2021, this)">
-
-            2021
-
-            <div class="data-type">
-                Observed / Reference
-            </div>
-
-        </button>
-
-
-        <button
-            class="year-button"
-            onclick="changeYear(2024, this)">
-
-            2024
-
-            <div class="data-type">
-                Observed / Reference
-            </div>
-
-        </button>
-
-
-        <button
-            class="year-button"
-            onclick="changeYear(2027, this)">
-
-            2027
-
-            <div class="data-type">
-                Projected • ANN
-            </div>
-
-        </button>
-
-
-        <button
-            class="year-button"
-            onclick="changeYear(2030, this)">
-
-            2030
-
-            <div class="data-type">
-                Projected • ANN
-            </div>
-
-        </button>
-
-    </div>
-
-</div>
-
-
-<!-- LAYERS -->
-
-<div class="sidebar-section">
-
-    <h4>Map Layers</h4>
-
-
-    <label class="layer-option">
-
-        <input
-            type="checkbox"
-            id="coralToggle"
-            checked
-            onchange="toggleCoral(this)"
-        >
-
-        <span class="legend-box coral"></span>
-
-        Coral Reef
-
-    </label>
-
-
-    <label class="layer-option">
-
-        <input
-            type="checkbox"
-            id="seagrassToggle"
-            checked
-            onchange="toggleSeagrass(this)"
-        >
-
-        <span class="legend-box seagrass"></span>
-
-        Seagrass
-
-    </label>
-
-
-    <label class="layer-option">
-
-        <input
-            type="checkbox"
-            id="currentToggle"
-            onchange="toggleCurrent(this)"
-        >
-
-        <span class="legend-box current"></span>
-
-        Ocean Current
-
-    </label>
-
-</div>
-
-
-<!-- BASEMAP -->
-
-<div class="sidebar-section">
-
-    <h4>Basemap</h4>
-
-
-    <label class="layer-option">
-
-        <input
-            type="radio"
-            name="basemap"
-            checked
-            onchange="setBasemap('satellite')"
-        >
-
-        🛰️ Satellite
-
-    </label>
-
-
-    <label class="layer-option">
-
-        <input
-            type="radio"
-            name="basemap"
-            onchange="setBasemap('roadmap')"
-        >
-
-        🗺️ Road Map
-
-    </label>
-
-
-    <label class="layer-option">
-
-        <input
-            type="radio"
-            name="basemap"
-            onchange="setBasemap('terrain')"
-        >
-
-        ⛰️ Terrain
-
-    </label>
-
-</div>
-
-
-<!-- LEGEND -->
-
-<div class="sidebar-section">
-
-    <h4>Legend</h4>
-
-
-    <div class="legend-item">
-
-        <span class="legend-box coral"></span>
-
-        Coral Reef
-
-    </div>
-
-
-    <div class="legend-item">
-
-        <span class="legend-box seagrass"></span>
-
-        Seagrass
-
-    </div>
-
-
-    <div class="legend-item">
-
-        <span class="legend-box current"></span>
-
-        Ocean Current
-
-    </div>
-
-</div>
-
-
-<!-- OPACITY -->
-
-<div class="sidebar-section">
-
-    <h4>Overlay Opacity</h4>
-
-
-    <div class="opacity-label">
-
-        <span>Transparency</span>
-
-        <span id="opacityValue">
-            75%
-        </span>
-
-    </div>
-
-
-    <div class="opacity-control">
-
-        <input
-            type="range"
-            id="opacitySlider"
-            min="0.1"
-            max="1"
-            step="0.05"
-            value="0.75"
-            oninput="changeOpacity(this.value)"
-        >
-
-    </div>
-
-</div>
-
-
-<!-- INFORMATION -->
-
-<div class="sidebar-section">
-
-    <h4>Map Information</h4>
-
-    <p style="
-        font-size:11px;
-        line-height:1.6;
-        color:#71868a;
-    ">
-
-        Observed/reference datasets are based on
-        available ecosystem mapping products.
-        Projected datasets represent ANN-based
-        future ecosystem scenarios.
-
-    </p>
-
-</div>
-
-
-</aside>
-
-
-<!-- =====================================================
-     MAP
-===================================================== -->
-
-<div class="map-area">
-
-
-    <div
-        id="map-loading"
-        class="map-loading">
-
-        Loading interactive map...
-
-    </div>
-
-
-    <div id="interactive-map"></div>
-
-
-    <div class="map-control">
-
-        <button onclick="resetMapView()">
-            ⌂ Reset
-        </button>
-
-
-        <button onclick="toggleFullscreen()">
-            ⛶ Fullscreen
-        </button>
-
-    </div>
-
-
-    <div class="map-info">
-
-        <div
-            class="map-info-title"
-            id="map-info-title">
-
-            Coral Reef — 2021
-
+            <p>
+                Explore coral reef distribution across different
+                temporal datasets.
+            </p>
         </div>
 
 
-        <div
-            class="map-info-subtitle"
-            id="map-info-source">
+        <div class="map-layout">
 
-            Allen Coral Atlas • Observed / Reference
+            <!-- SIDEBAR -->
 
-        </div>
+            <aside class="sidebar">
+
+                <h3>Map Controls</h3>
 
 
-        <div
-            class="map-info-value"
-            id="map-info-area">
+                <!-- YEAR -->
 
-            27.50 km²
+                <div class="sidebar-section">
+
+                    <div class="sidebar-section-title">
+                        Temporal Dataset
+                    </div>
+
+                    <div class="year-buttons">
+
+                        <button
+                            class="year-btn active"
+                            data-year="2021">
+                            2021
+                        </button>
+
+                        <button
+                            class="year-btn"
+                            data-year="2024">
+                            2024
+                        </button>
+
+                        <button
+                            class="year-btn"
+                            data-year="2027">
+                            2027
+                        </button>
+
+                        <button
+                            class="year-btn"
+                            data-year="2030">
+                            2030
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- LAYERS -->
+
+                <div class="sidebar-section">
+
+                    <div class="sidebar-section-title">
+                        Layers
+                    </div>
+
+                    <label class="layer-option">
+                        <input
+                            type="checkbox"
+                            id="coral-toggle"
+                            checked>
+                        Coral Reef
+                    </label>
+
+                    <label class="layer-option">
+                        <input
+                            type="checkbox"
+                            id="seagrass-toggle">
+                        Seagrass
+                    </label>
+
+                    <label class="layer-option">
+                        <input
+                            type="checkbox"
+                            id="current-toggle">
+                        Ocean Current
+                    </label>
+
+                </div>
+
+
+                <!-- BASEMAP -->
+
+                <div class="sidebar-section">
+
+                    <div class="sidebar-section-title">
+                        Basemap
+                    </div>
+
+                    <label class="basemap-option">
+                        <input
+                            type="radio"
+                            name="basemap"
+                            value="osm"
+                            checked>
+                        OpenStreetMap
+                    </label>
+
+                    <label class="basemap-option">
+                        <input
+                            type="radio"
+                            name="basemap"
+                            value="satellite">
+                        Satellite
+                    </label>
+
+                </div>
+
+
+                <!-- OPACITY -->
+
+                <div class="sidebar-section">
+
+                    <div class="sidebar-section-title">
+                        Raster Opacity
+                    </div>
+
+                    <input
+                        type="range"
+                        id="opacity-slider"
+                        class="opacity-control"
+                        min="0"
+                        max="1"
+                        step="0.05"
+                        value="0.75">
+
+                </div>
+
+
+                <div style="
+                    font-size:12px;
+                    color:#6b7280;
+                    line-height:1.5;
+                ">
+                    <strong>Note:</strong><br>
+                    2021 and 2024 represent reference mapping products,
+                    while 2027 and 2030 represent ANN-based projections.
+                </div>
+
+            </aside>
+
+
+            <!-- MAP -->
+
+            <div class="map-wrapper">
+
+                <div
+                    id="map-loading"
+                    class="map-loading">
+                    Loading interactive map...
+                </div>
+
+                <div id="interactive-map"></div>
+
+                <div class="map-info">
+
+                    <div>
+                        <strong id="map-year">
+                            2021
+                        </strong>
+                    </div>
+
+                    <div id="map-source">
+                        Allen Coral Atlas
+                    </div>
+
+                </div>
+
+
+                <div class="legend">
+
+                    <div class="legend-title">
+                        Legend
+                    </div>
+
+                    <div class="legend-row">
+
+                        <div
+                            class="legend-box"
+                            style="background:#0f766e;">
+                        </div>
+
+                        Coral Reef
+
+                    </div>
+
+                    <div class="legend-row">
+
+                        <div
+                            class="legend-box"
+                            style="background:#84cc16;">
+                        </div>
+
+                        Seagrass
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
     </div>
-
-
-</div>
-
-
-</div>
-
-</div>
 
 </section>
 
 
-<!-- =========================================================
+<!-- =========================
      ANALYSIS
-========================================================= -->
+========================= -->
 
-<section id="analysis" class="section">
+<section id="analysis">
 
-<div class="section-title">
+    <div class="section-title">
 
-    <h2>Spatial & Temporal Analysis</h2>
+        <h2>Spatial & Temporal Analysis</h2>
 
-    <p>
-        Coral reef spatial extent across the
-        available temporal datasets.
-    </p>
-
-</div>
-
-
-<div class="analysis-grid">
-
-
-<div class="analysis-card">
-
-    <h3>
-        Coral Reef Area by Year
-    </h3>
-
-
-    <div class="bar-chart">
-
-
-        <div class="bar-wrapper">
-
-            <div class="bar-value">
-                27.50
-            </div>
-
-            <div
-                class="bar"
-                style="height:72%;">
-            </div>
-
-            <div class="bar-year">
-                2021
-            </div>
-
-        </div>
-
-
-        <div class="bar-wrapper">
-
-            <div class="bar-value">
-                35.24
-            </div>
-
-            <div
-                class="bar"
-                style="height:92%;">
-            </div>
-
-            <div class="bar-year">
-                2024
-            </div>
-
-        </div>
-
-
-        <div class="bar-wrapper">
-
-            <div class="bar-value">
-                27.18
-            </div>
-
-            <div
-                class="bar"
-                style="height:71%;">
-            </div>
-
-            <div class="bar-year">
-                2027
-            </div>
-
-        </div>
-
-
-        <div class="bar-wrapper">
-
-            <div class="bar-value">
-                30.17
-            </div>
-
-            <div
-                class="bar"
-                style="height:79%;">
-            </div>
-
-            <div class="bar-year">
-                2030
-            </div>
-
-        </div>
-
+        <p>
+            Comparison of coral reef area across observation
+            and projection periods.
+        </p>
 
     </div>
 
-</div>
+
+    <div class="analysis-grid">
+
+        <div class="analysis-card">
+
+            <h3>Coral Reef Area</h3>
+
+            <div class="bar-row">
+
+                <div class="bar-label">
+                    <span>2021</span>
+                    <span>27.50 km²</span>
+                </div>
+
+                <div class="bar">
+                    <div
+                        class="bar-fill"
+                        style="width:78%;">
+                    </div>
+                </div>
+
+            </div>
 
 
-<div class="analysis-card">
+            <div class="bar-row">
 
-    <h3>
-        Temporal Change
-    </h3>
+                <div class="bar-label">
+                    <span>2024</span>
+                    <span>35.24 km²</span>
+                </div>
+
+                <div class="bar">
+                    <div
+                        class="bar-fill"
+                        style="width:100%;">
+                    </div>
+                </div>
+
+            </div>
 
 
-    <div class="change-list">
+            <div class="bar-row">
+
+                <div class="bar-label">
+                    <span>2027</span>
+                    <span>27.18 km²</span>
+                </div>
+
+                <div class="bar">
+                    <div
+                        class="bar-fill"
+                        style="width:77%;">
+                    </div>
+                </div>
+
+            </div>
 
 
-        <div class="change-item">
+            <div class="bar-row">
 
-            <span>
-                2021 → 2024
-            </span>
+                <div class="bar-label">
+                    <span>2030</span>
+                    <span>30.17 km²</span>
+                </div>
 
-            <span class="change-value">
-                +28.15%
-            </span>
+                <div class="bar">
+                    <div
+                        class="bar-fill"
+                        style="width:86%;">
+                    </div>
+                </div>
+
+            </div>
 
         </div>
 
 
-        <div class="change-item">
+        <div class="analysis-card">
 
-            <span>
-                2024 → 2027
-            </span>
+            <h3>Temporal Interpretation</h3>
 
-            <span class="change-value">
-                −22.87%
-            </span>
+            <p>
+                The reference period shows an increase in mapped
+                coral reef area between 2021 and 2024.
+                The ANN projections indicate a subsequent
+                decrease in 2027 followed by a partial increase
+                by 2030.
+            </p>
 
-        </div>
+            <br>
 
-
-        <div class="change-item">
-
-            <span>
-                2027 → 2030
-            </span>
-
-            <span class="change-value">
-                +11.00%
-            </span>
+            <p>
+                These projected values represent model outputs
+                and should therefore be interpreted separately
+                from the reference mapping products.
+            </p>
 
         </div>
-
-
-        <div class="change-item">
-
-            <span>
-                2021 → 2030
-            </span>
-
-            <span class="change-value">
-                +9.71%
-            </span>
-
-        </div>
-
 
     </div>
-
-</div>
-
-
-</div>
 
 </section>
 
 
-<!-- =========================================================
+<!-- =========================
      METHODOLOGY
-========================================================= -->
+========================= -->
 
-<section id="methodology" class="section">
+<section id="methodology">
 
-<div class="section-title">
+    <div class="section-title">
 
-    <h2>Data & Methodology</h2>
+        <h2>Methodology</h2>
 
-    <p>
-        General workflow from spatial data acquisition
-        to WebGIS visualization and future projection.
-    </p>
+        <p>
+            Overview of the spatial data processing workflow.
+        </p>
 
-</div>
-
-
-<div class="method-grid">
-
-
-<div class="method-card">
-
-    <div class="method-number">
-        01
     </div>
 
-    <h3>
-        Reference Data
-    </h3>
 
-    <p>
-        Marine ecosystem reference layers obtained
-        from available spatial mapping products,
-        including Allen Coral Atlas.
-    </p>
+    <div class="content-grid">
 
-</div>
+        <div class="content-card">
+
+            <h3>Reference Mapping</h3>
+
+            <p>
+                Coral reef distribution for the reference periods
+                was obtained from Allen Coral Atlas and used as
+                the spatial reference dataset.
+            </p>
+
+        </div>
 
 
-<div class="method-card">
+        <div class="content-card">
 
-    <div class="method-number">
-        02
+            <h3>Spatial Processing</h3>
+
+            <p>
+                Spatial datasets were processed and visualized
+                using GIS and remote sensing approaches to
+                characterize marine ecosystem distribution.
+            </p>
+
+        </div>
+
+
+        <div class="content-card">
+
+            <h3>ANN Projection</h3>
+
+            <p>
+                Artificial Neural Network (ANN) modelling was
+                applied to generate projected coral reef
+                distribution for 2027 and 2030.
+            </p>
+
+        </div>
+
     </div>
-
-    <h3>
-        GIS & Remote Sensing
-    </h3>
-
-    <ul>
-
-        <li>
-            Spatial data processing
-        </li>
-
-        <li>
-            Satellite-based mapping
-        </li>
-
-        <li>
-            Ecosystem classification
-        </li>
-
-    </ul>
-
-</div>
-
-
-<div class="method-card">
-
-    <div class="method-number">
-        03
-    </div>
-
-    <h3>
-        ANN Projection
-    </h3>
-
-    <ul>
-
-        <li>
-            Model-based prediction
-        </li>
-
-        <li>
-            Future scenario mapping
-        </li>
-
-        <li>
-            2027 & 2030 projection
-        </li>
-
-    </ul>
-
-</div>
-
-
-<div class="method-card">
-
-    <div class="method-number">
-        04
-    </div>
-
-    <h3>
-        WebGIS
-    </h3>
-
-    <ul>
-
-        <li>
-            Interactive map
-        </li>
-
-        <li>
-            Temporal layer switching
-        </li>
-
-        <li>
-            Basemap selection
-        </li>
-
-        <li>
-            Layer controls
-        </li>
-
-    </ul>
-
-</div>
-
-
-</div>
 
 </section>
 
 
-<!-- =========================================================
+<!-- =========================
      METADATA
-========================================================= -->
+========================= -->
 
-<section class="section">
+<section id="metadata">
 
-<div class="section-title">
+    <div class="section-title">
 
-    <h2>Spatial Data Metadata</h2>
+        <h2>Metadata</h2>
 
-    <p>
-        Overview of the temporal ecosystem datasets
-        used in the WebGIS.
-    </p>
+        <p>
+            Dataset information and temporal classification.
+        </p>
 
-</div>
-
-
-<div style="overflow-x:auto;">
-
-<table class="metadata-table">
-
-<thead>
-
-<tr>
-
-    <th>Year</th>
-
-    <th>Status</th>
-
-    <th>Source / Method</th>
-
-    <th>Coral Reef Area</th>
-
-    <th>Purpose</th>
-
-</tr>
-
-</thead>
+    </div>
 
 
-<tbody>
+    <table class="metadata">
 
+        <thead>
 
-<tr>
+            <tr>
+                <th>Year</th>
+                <th>Dataset Type</th>
+                <th>Source / Method</th>
+                <th>Coral Reef Area</th>
+            </tr>
 
-    <td>2021</td>
+        </thead>
 
-    <td>Observed / Reference</td>
+        <tbody>
 
-    <td>Allen Coral Atlas</td>
+            <tr>
+                <td>2021</td>
+                <td>Reference</td>
+                <td>Allen Coral Atlas</td>
+                <td>27.50 km²</td>
+            </tr>
 
-    <td>27.50 km²</td>
+            <tr>
+                <td>2024</td>
+                <td>Reference</td>
+                <td>Allen Coral Atlas</td>
+                <td>35.24 km²</td>
+            </tr>
 
-    <td>Baseline ecosystem mapping</td>
+            <tr>
+                <td>2027</td>
+                <td>Projected</td>
+                <td>ANN Prediction</td>
+                <td>27.18 km²</td>
+            </tr>
 
-</tr>
+            <tr>
+                <td>2030</td>
+                <td>Projected</td>
+                <td>ANN Prediction</td>
+                <td>30.17 km²</td>
+            </tr>
 
+        </tbody>
 
-<tr>
-
-    <td>2024</td>
-
-    <td>Observed / Reference</td>
-
-    <td>Allen Coral Atlas</td>
-
-    <td>35.24 km²</td>
-
-    <td>Temporal comparison</td>
-
-</tr>
-
-
-<tr>
-
-    <td>2027</td>
-
-    <td>Projected</td>
-
-    <td>ANN Prediction</td>
-
-    <td>27.18 km²</td>
-
-    <td>Future scenario</td>
-
-</tr>
-
-
-<tr>
-
-    <td>2030</td>
-
-    <td>Projected</td>
-
-    <td>ANN Prediction</td>
-
-    <td>30.17 km²</td>
-
-    <td>Future scenario</td>
-
-</tr>
-
-
-</tbody>
-
-</table>
-
-</div>
+    </table>
 
 </section>
 
 
-<!-- =========================================================
+<!-- =========================
      ABOUT
-========================================================= -->
+========================= -->
 
-<section class="section">
+<section id="about">
 
-<div class="section-title">
+    <div class="section-title">
 
-    <h2>About This Project</h2>
+        <h2>About the Project</h2>
 
-</div>
+        <p>
+            Marine spatial analysis and visualization.
+        </p>
 
-
-<div class="about-box">
-
-    <p>
-
-        This WebGIS project was developed as an
-        interactive spatial visualization platform
-        for exploring marine ecosystem distribution
-        and temporal changes.
-
-    </p>
+    </div>
 
 
-    <p>
+    <div class="content-card">
 
-        The platform integrates GIS, remote sensing,
-        satellite basemaps, ecosystem mapping products,
-        and model-based future projections into a
-        single interactive spatial interface.
+        <p>
+            This Marine Spatial Data Portal integrates spatial,
+            temporal, and oceanographic information to support
+            visualization and interpretation of marine ecosystem
+            conditions. The platform is designed as an interactive
+            WebGIS for exploring coral reef and related marine
+            spatial datasets.
+        </p>
 
-    </p>
-
-
-    <p>
-
-        Observed/reference ecosystem information is
-        distinguished from projected future scenarios
-        to maintain a clear separation between mapped
-        observations and model-based predictions.
-
-    </p>
-
-</div>
+    </div>
 
 </section>
 
 
-</main>
-
-
-<!-- =========================================================
+<!-- =========================
      FOOTER
-========================================================= -->
+========================= -->
 
 <footer>
 
-<div class="footer-content">
+    <div class="footer-inner">
 
-    <p>
-        Marine Spatial Data Portal
-    </p>
+        <h3>Marine Spatial Data Portal</h3>
 
-    <p>
-        Coral Reef • Seagrass • Oceanographic Conditions
-    </p>
+        <p>
+            Spatial–Temporal Marine Ecosystem Analysis
+        </p>
 
-    <p>
-        Developed for marine spatial data visualization
-        and environmental analysis.
-    </p>
-
-</div>
+    </div>
 
 </footer>
 
 
-<!-- =========================================================
+<!-- =========================
      LEAFLET JS
-========================================================= -->
+========================= -->
 
-<script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin="">
-</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 
 <script>
 
-/* =========================================================
-   DATA
-========================================================= */
+    /* =========================================================
+       DATA
+    ========================================================= */
 
-const imageData = {
+    const imageData = {
 
-    2021: "./2021.png",
-    2024: "./2024.png",
-    2027: "./2027.png",
-    2030: "./2030.png"
+        2021: "./2021.png",
+        2024: "./2024.png",
+        2027: "./2027.png",
+        2030: "./2030.png"
 
-};
-
-
-const coralArea = {
-
-    2021: "27.50 km²",
-    2024: "35.24 km²",
-    2027: "27.18 km²",
-    2030: "30.17 km²"
-
-};
+    };
 
 
-const dataInfo = {
+    const sourceData = {
 
-    2021: {
-        type: "Observed / Reference",
-        source: "Allen Coral Atlas"
-    },
+        2021: "Allen Coral Atlas",
+        2024: "Allen Coral Atlas",
+        2027: "ANN Prediction",
+        2030: "ANN Prediction"
 
-    2024: {
-        type: "Observed / Reference",
-        source: "Allen Coral Atlas"
-    },
-
-    2027: {
-        type: "Projected",
-        source: "ANN Prediction"
-    },
-
-    2030: {
-        type: "Projected",
-        source: "ANN Prediction"
-    }
-
-};
+    };
 
 
-/* =========================================================
-   LEAFLET VARIABLES
-========================================================= */
+    /*
+       IMPORTANT
 
-let leafletMap = null;
+       These bounds are the geographic extent assumed
+       for the PNG raster.
 
-let currentOverlay = null;
+       If the PNG was exported from GIS with a different
+       geographic extent, replace these coordinates.
+    */
 
-let currentYear = 2021;
+    const studyBounds = [
 
-let currentOpacity = 0.75;
+        [-5.60, 120.40],
 
-let satelliteLayer = null;
+        [-5.40, 120.60]
 
-let roadmapLayer = null;
-
-let terrainLayer = null;
-
-
-/* =========================================================
-   STUDY AREA
-=========================================================
-
-   GANTI DENGAN EXTENT SEBENARNYA
-   DARI DATA GIS KAMU.
-
-========================================================= */
-
-const studyBounds = {
-
-    north: -5.40,
-    south: -5.60,
-    east: 120.60,
-    west: 120.40
-
-};
+    ];
 
 
-const leafletBounds = [
+    /* =========================================================
+       GLOBAL VARIABLES
+    ========================================================= */
 
-    [
-        studyBounds.south,
-        studyBounds.west
-    ],
+    let leafletMap = null;
 
-    [
-        studyBounds.north,
-        studyBounds.east
-    ]
+    let currentOverlay = null;
 
-];
+    let currentYear = 2021;
 
+    let currentOpacity = 0.75;
 
-const studyCenter = [
+    let osmLayer = null;
 
-    (
-        studyBounds.north +
-        studyBounds.south
-    ) / 2,
+    let satelliteLayer = null;
 
-    (
-        studyBounds.east +
-        studyBounds.west
-    ) / 2
-
-];
+    let mapInitialized = false;
 
 
-/* =========================================================
-   INITIALIZE MAP
-========================================================= */
+    /* =========================================================
+       INITIALIZE MAP
+    ========================================================= */
 
-function initMap() {
+    function initMap() {
 
-    leafletMap = L.map(
-        "interactive-map",
-        {
-            center: studyCenter,
-            zoom: 10,
-            zoomControl: true
+        if (mapInitialized) {
+            return;
         }
-    );
+
+        mapInitialized = true;
 
 
-    /* =====================================================
-       BASEMAPS
-    ===================================================== */
-
-    roadmapLayer =
-        L.tileLayer(
-            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        leafletMap = L.map(
+            "interactive-map",
             {
-                maxZoom: 19,
-                attribution:
-                    '&copy; OpenStreetMap contributors'
+
+                zoomControl: true,
+
+                preferCanvas: true,
+
+                zoomAnimation: false,
+
+                fadeAnimation: false,
+
+                markerZoomAnimation: false,
+
+                inertia: true,
+
+                worldCopyJump: false
+
             }
         );
 
 
-    satelliteLayer =
-        L.tileLayer(
-            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        /*
+           LIGHTWEIGHT DEFAULT BASEMAP
+        */
+
+        osmLayer = L.tileLayer(
+
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+
             {
-                maxZoom: 19,
+
+                maxZoom: 18,
+
+                updateWhenIdle: true,
+
+                updateWhenZooming: false,
+
+                keepBuffer: 0,
+
+                attribution:
+                    "&copy; OpenStreetMap contributors"
+
+            }
+
+        );
+
+
+        /*
+           OPTIONAL SATELLITE BASEMAP
+        */
+
+        satelliteLayer = L.tileLayer(
+
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+
+            {
+
+                maxZoom: 18,
+
+                updateWhenIdle: true,
+
+                updateWhenZooming: false,
+
+                keepBuffer: 0,
+
                 attribution:
                     "Tiles &copy; Esri"
+
             }
+
         );
 
 
-    terrainLayer =
-        L.tileLayer(
-            "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+        /*
+           OSM DEFAULT
+        */
+
+        osmLayer.addTo(leafletMap);
+
+
+        /*
+           IMPORTANT:
+           fitBounds ONLY ONCE
+        */
+
+        leafletMap.fitBounds(
+            studyBounds,
             {
-                maxZoom: 17,
-                attribution:
-                    '&copy; OpenStreetMap contributors, SRTM | OpenTopoMap'
+                padding: [20,20]
             }
         );
 
 
-    satelliteLayer.addTo(
-        leafletMap
-    );
+        /*
+           LOAD INITIAL RASTER
+        */
+
+        loadYear(currentYear);
 
 
-    /* =====================================================
-       INITIAL OVERLAY
-    ===================================================== */
+        /*
+           Fix map size after rendering
+        */
 
-    loadOverlay(
-        2021
-    );
+        requestAnimationFrame(() => {
+
+            leafletMap.invalidateSize();
+
+        });
 
 
-    /* =====================================================
-       FIT STUDY AREA
-    ===================================================== */
+        /*
+           Hide loading screen
+        */
 
-    leafletMap.fitBounds(
-        leafletBounds,
-        {
-            padding: [20,20]
+        document
+            .getElementById("map-loading")
+            .classList.add("hidden");
+
+    }
+
+
+    /* =========================================================
+       LOAD YEAR
+    ========================================================= */
+
+    function loadYear(year) {
+
+        currentYear = year;
+
+
+        /*
+           Remove previous raster
+        */
+
+        if (currentOverlay) {
+
+            leafletMap.removeLayer(
+                currentOverlay
+            );
+
+            currentOverlay = null;
+
         }
-    );
 
 
-    /* =====================================================
-       HIDE LOADING
-    ===================================================== */
+        /*
+           Create new raster
+        */
 
-    const loading =
-        document.getElementById(
-            "map-loading"
-        );
-
-
-    if (loading) {
-
-        loading.style.display =
-            "none";
-
-    }
-
-}
-
-
-/* =========================================================
-   LOAD IMAGE OVERLAY
-========================================================= */
-
-function loadOverlay(year) {
-
-    if (!leafletMap) return;
-
-
-    /* Remove previous overlay */
-
-    if (currentOverlay) {
-
-        leafletMap.removeLayer(
-            currentOverlay
-        );
-
-    }
-
-
-    /* Create new overlay */
-
-    currentOverlay =
-        L.imageOverlay(
+        currentOverlay = L.imageOverlay(
 
             imageData[year],
 
-            leafletBounds,
+            studyBounds,
 
             {
 
-                opacity:
-                    currentOpacity,
+                opacity: currentOpacity,
 
-                interactive:
-                    false
+                interactive: false,
 
-            }
-
-        );
-
-
-    currentOverlay.addTo(
-        leafletMap
-    );
-
-}
-
-
-/* =========================================================
-   CHANGE YEAR
-========================================================= */
-
-function changeYear(
-    year,
-    button
-) {
-
-    if (!leafletMap) return;
-
-
-    currentYear =
-        year;
-
-
-    loadOverlay(
-        year
-    );
-
-
-    const info =
-        dataInfo[year];
-
-
-    /* Map title */
-
-    document.getElementById(
-        "map-title"
-    ).innerText =
-        "Spatial Distribution — " +
-        year;
-
-
-    /* Map status */
-
-    document.getElementById(
-        "map-status"
-    ).innerText =
-        info.type.toUpperCase() +
-        " • " +
-        info.source.toUpperCase();
-
-
-    /* Dashboard */
-
-    document.getElementById(
-        "dashboard-year"
-    ).innerText =
-        year;
-
-
-    document.getElementById(
-        "dashboard-type"
-    ).innerText =
-        info.type;
-
-
-    document.getElementById(
-        "coral-area"
-    ).innerText =
-        coralArea[year];
-
-
-    document.getElementById(
-        "data-source"
-    ).innerText =
-        info.source;
-
-
-    /* Floating information */
-
-    document.getElementById(
-        "map-info-title"
-    ).innerText =
-        "Coral Reef — " +
-        year;
-
-
-    document.getElementById(
-        "map-info-source"
-    ).innerText =
-        info.source +
-        " • " +
-        info.type;
-
-
-    document.getElementById(
-        "map-info-area"
-    ).innerText =
-        coralArea[year];
-
-
-    /* Active year button */
-
-    document
-        .querySelectorAll(
-            ".year-button"
-        )
-        .forEach(
-            function(btn) {
-
-                btn.classList.remove(
-                    "active"
-                );
+                crossOrigin: false
 
             }
+
         );
 
-
-    button.classList.add(
-        "active"
-    );
-
-}
-
-
-/* =========================================================
-   OPACITY
-========================================================= */
-
-function changeOpacity(
-    value
-) {
-
-    currentOpacity =
-        parseFloat(
-            value
-        );
-
-
-    if (currentOverlay) {
-
-        currentOverlay.setOpacity(
-            currentOpacity
-        );
-
-    }
-
-
-    document.getElementById(
-        "opacityValue"
-    ).innerText =
-        Math.round(
-            currentOpacity * 100
-        ) +
-        "%";
-
-}
-
-
-/* =========================================================
-   BASEMAP
-========================================================= */
-
-function setBasemap(
-    type
-) {
-
-    if (!leafletMap) return;
-
-
-    /* Remove all basemaps */
-
-    if (
-        leafletMap.hasLayer(
-            satelliteLayer
-        )
-    ) {
-
-        leafletMap.removeLayer(
-            satelliteLayer
-        );
-
-    }
-
-
-    if (
-        leafletMap.hasLayer(
-            roadmapLayer
-        )
-    ) {
-
-        leafletMap.removeLayer(
-            roadmapLayer
-        );
-
-    }
-
-
-    if (
-        leafletMap.hasLayer(
-            terrainLayer
-        )
-    ) {
-
-        leafletMap.removeLayer(
-            terrainLayer
-        );
-
-    }
-
-
-    /* Add selected basemap */
-
-    if (
-        type === "satellite"
-    ) {
-
-        satelliteLayer.addTo(
-            leafletMap
-        );
-
-    }
-
-
-    if (
-        type === "roadmap"
-    ) {
-
-        roadmapLayer.addTo(
-            leafletMap
-        );
-
-    }
-
-
-    if (
-        type === "terrain"
-    ) {
-
-        terrainLayer.addTo(
-            leafletMap
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   CORAL REEF
-========================================================= */
-
-function toggleCoral(
-    checkbox
-) {
-
-    if (!currentOverlay) return;
-
-
-    if (
-        checkbox.checked
-    ) {
 
         currentOverlay.addTo(
             leafletMap
         );
 
-        currentOverlay.setOpacity(
-            currentOpacity
-        );
 
-    }
+        /*
+           Update UI
+        */
 
-    else {
-
-        leafletMap.removeLayer(
-            currentOverlay
-        );
-
-    }
-
-}
+        document
+            .getElementById("map-year")
+            .textContent = year;
 
 
-/* =========================================================
-   SEAGRASS
-========================================================= */
-
-function toggleSeagrass(
-    checkbox
-) {
-
-    /*
-       Saat ini belum ada file raster
-       seagrass terpisah.
-
-       Jangan membuat layer palsu.
-    */
-
-    if (
-        !checkbox.checked
-    ) {
-
-        return;
+        document
+            .getElementById("map-source")
+            .textContent = sourceData[year];
 
     }
 
 
-    alert(
-        "Seagrass layer belum tersedia sebagai raster terpisah."
-    );
+    /* =========================================================
+       YEAR BUTTONS
+    ========================================================= */
 
-}
+    document
+        .querySelectorAll(".year-btn")
+        .forEach(button => {
 
+            button.addEventListener(
+                "click",
+                function() {
 
-/* =========================================================
-   OCEAN CURRENT
-========================================================= */
-
-function toggleCurrent(
-    checkbox
-) {
-
-    if (
-        checkbox.checked
-    ) {
-
-        alert(
-            "Ocean Current layer belum terhubung ke data spasial."
-        );
+                    const year =
+                        Number(
+                            this.dataset.year
+                        );
 
 
-        checkbox.checked =
-            false;
+                    /*
+                       Active button
+                    */
 
-    }
+                    document
+                        .querySelectorAll(".year-btn")
+                        .forEach(btn => {
 
-}
+                            btn.classList.remove(
+                                "active"
+                            );
 
-
-/* =========================================================
-   RESET MAP
-========================================================= */
-
-function resetMapView() {
-
-    if (!leafletMap) return;
+                        });
 
 
-    leafletMap.fitBounds(
-        leafletBounds,
-        {
-            padding: [20,20]
-        }
-    );
-
-}
+                    this.classList.add(
+                        "active"
+                    );
 
 
-/* =========================================================
-   FULLSCREEN
-========================================================= */
+                    /*
+                       Change raster
+                    */
 
-function toggleFullscreen() {
+                    if (mapInitialized) {
 
-    const mapArea =
-        document.querySelector(
-            ".map-area"
-        );
+                        loadYear(year);
 
+                    }
 
-    if (
-        !document.fullscreenElement
-    ) {
+                }
+            );
 
-        if (
-            mapArea.requestFullscreen
-        ) {
-
-            mapArea.requestFullscreen();
-
-        }
-
-    }
-
-    else {
-
-        document.exitFullscreen();
-
-    }
-
-}
+        });
 
 
-/* =========================================================
-   FULLSCREEN RESIZE
-========================================================= */
+    /* =========================================================
+       OPACITY
+    ========================================================= */
 
-document.addEventListener(
-    "fullscreenchange",
-    function() {
-
-        setTimeout(
+    document
+        .getElementById("opacity-slider")
+        .addEventListener(
+            "input",
             function() {
 
-                if (leafletMap) {
+                currentOpacity =
+                    Number(this.value);
 
-                    leafletMap.invalidateSize();
+
+                if (currentOverlay) {
+
+                    currentOverlay.setOpacity(
+                        currentOpacity
+                    );
+
+                }
+
+            }
+        );
+
+
+    /* =========================================================
+       BASEMAP
+    ========================================================= */
+
+    document
+        .querySelectorAll(
+            'input[name="basemap"]'
+        )
+        .forEach(radio => {
+
+            radio.addEventListener(
+                "change",
+                function() {
+
+                    if (!mapInitialized) {
+                        return;
+                    }
+
+
+                    if (this.value === "osm") {
+
+                        if (
+                            leafletMap.hasLayer(
+                                satelliteLayer
+                            )
+                        ) {
+
+                            leafletMap.removeLayer(
+                                satelliteLayer
+                            );
+
+                        }
+
+
+                        if (
+                            !leafletMap.hasLayer(
+                                osmLayer
+                            )
+                        ) {
+
+                            osmLayer.addTo(
+                                leafletMap
+                            );
+
+                        }
+
+                    }
+
+
+                    if (this.value === "satellite") {
+
+                        if (
+                            leafletMap.hasLayer(
+                                osmLayer
+                            )
+                        ) {
+
+                            leafletMap.removeLayer(
+                                osmLayer
+                            );
+
+                        }
+
+
+                        if (
+                            !leafletMap.hasLayer(
+                                satelliteLayer
+                            )
+                        ) {
+
+                            satelliteLayer.addTo(
+                                leafletMap
+                            );
+
+                        }
+
+                    }
+
+                }
+            );
+
+        });
+
+
+    /* =========================================================
+       PLACEHOLDER LAYERS
+    ========================================================= */
+
+    document
+        .getElementById("seagrass-toggle")
+        .addEventListener(
+            "change",
+            function() {
+
+                if (this.checked) {
+
+                    alert(
+                        "Seagrass spatial data is not available in the current dataset."
+                    );
+
+                    this.checked = false;
+
+                }
+
+            }
+        );
+
+
+    document
+        .getElementById("current-toggle")
+        .addEventListener(
+            "change",
+            function() {
+
+                if (this.checked) {
+
+                    alert(
+                        "Ocean current spatial data is not available in the current dataset."
+                    );
+
+                    this.checked = false;
+
+                }
+
+            }
+        );
+
+
+    /* =========================================================
+       CORAL TOGGLE
+    ========================================================= */
+
+    document
+        .getElementById("coral-toggle")
+        .addEventListener(
+            "change",
+            function() {
+
+                if (!currentOverlay) {
+                    return;
+                }
+
+
+                if (this.checked) {
+
+                    currentOverlay.addTo(
+                        leafletMap
+                    );
+
+                } else {
+
+                    leafletMap.removeLayer(
+                        currentOverlay
+                    );
+
+                }
+
+            }
+        );
+
+
+    /* =========================================================
+       LAZY LOAD MAP
+    ========================================================= */
+
+    const mapSection =
+        document.getElementById(
+            "webgis"
+        );
+
+
+    /*
+       Map tidak langsung dibuat saat halaman
+       pertama kali dibuka.
+
+       Browser baru menjalankan Leaflet ketika
+       user mendekati bagian WebGIS.
+    */
+
+    const mapObserver =
+        new IntersectionObserver(
+
+            function(entries) {
+
+                if (
+                    entries[0].isIntersecting &&
+                    !mapInitialized
+                ) {
+
+                    initMap();
+
+                    mapObserver.disconnect();
 
                 }
 
             },
-            300
+
+            {
+
+                rootMargin:
+                    "400px 0px"
+
+            }
+
         );
 
-    }
-);
+
+    mapObserver.observe(
+        mapSection
+    );
 
 
-/* =========================================================
-   START MAP
-========================================================= */
+    /* =========================================================
+       RESIZE
+    ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
+    window.addEventListener(
+        "resize",
+        function() {
 
-        initMap();
+            if (leafletMap) {
 
-    }
-);
+                requestAnimationFrame(
+                    () => {
+
+                        leafletMap.invalidateSize();
+
+                    }
+                );
+
+            }
+
+        }
+    );
 
 </script>
 
-
 </body>
-
 </html>
-```
