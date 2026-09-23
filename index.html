@@ -1,310 +1,1106 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>WebGIS Terumbu Karang, Lamun, dan Arus</title>
+<meta charset="UTF-8">
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f7f9;
-            color: #222;
-        }
+<title>
+WebGIS | Coral Reef, Seagrass & Ocean Current
+</title>
 
-        /* HEADER */
-        .header {
-            background: #0b3954;
-            color: white;
-            padding: 18px 30px;
-        }
+<style>
 
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
+/* ================================
+   GLOBAL
+================================ */
 
-        .header p {
-            margin: 6px 0 0;
-            font-size: 14px;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        /* LAYOUT */
-        .container {
-            display: flex;
-            height: calc(100vh - 85px);
-        }
+body {
 
-        /* SIDEBAR */
-        .sidebar {
-            width: 300px;
-            background: white;
-            padding: 20px;
-            overflow-y: auto;
-            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
-        }
+    margin: 0;
 
-        .sidebar h2 {
-            margin-top: 0;
-            font-size: 20px;
-        }
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
-        .year-button {
-            width: 100%;
-            padding: 12px;
-            margin: 6px 0;
-            border: 1px solid #ccc;
-            background: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 15px;
-        }
+    background: #eef4f7;
 
-        .year-button:hover {
-            background: #e9f3f7;
-        }
+    color: #1f2933;
+}
 
-        .year-button.active {
-            background: #0b3954;
-            color: white;
-            border-color: #0b3954;
-        }
 
-        .info-box {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f0f5f7;
-            border-radius: 8px;
-        }
+/* ================================
+   HEADER
+================================ */
 
-        .info-box h3 {
-            margin-top: 0;
-        }
+.header {
 
-        /* MAP AREA */
-        .map-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            overflow: auto;
-        }
+    background:
+        linear-gradient(
+            135deg,
+            #073b4c,
+            #0b6075
+        );
 
-        .map-title {
-            margin-bottom: 12px;
-        }
+    color: white;
 
-        .map-title h2 {
-            margin: 0;
-            font-size: 21px;
-        }
+    padding: 24px 32px;
 
-        .map-title p {
-            margin: 5px 0;
-            color: #666;
-        }
+}
 
-        .map-container {
-            flex: 1;
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+.header h1 {
 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 400px;
-        }
+    margin: 0;
 
-        .map-container img {
-            max-width: 100%;
-            max-height: 75vh;
-            object-fit: contain;
-            border-radius: 5px;
-        }
+    font-size: 27px;
 
-        .footer {
-            margin-top: 10px;
-            font-size: 12px;
-            color: #777;
-        }
+    font-weight: 600;
 
-        @media (max-width: 800px) {
+}
 
-            .container {
-                flex-direction: column;
-                height: auto;
-            }
+.header p {
 
-            .sidebar {
-                width: 100%;
-            }
+    margin: 7px 0 0;
 
-            .map-area {
-                min-height: 600px;
-            }
-        }
+    font-size: 14px;
 
-    </style>
+    opacity: 0.9;
+
+}
+
+
+/* ================================
+   MAIN LAYOUT
+================================ */
+
+.container {
+
+    display: flex;
+
+    min-height:
+        calc(100vh - 96px);
+
+}
+
+
+/* ================================
+   SIDEBAR
+================================ */
+
+.sidebar {
+
+    width: 310px;
+
+    background: white;
+
+    padding: 24px;
+
+    box-shadow:
+        2px 0 10px
+        rgba(0,0,0,0.08);
+
+    overflow-y: auto;
+
+}
+
+
+.sidebar h2 {
+
+    margin-top: 0;
+
+    font-size: 20px;
+
+}
+
+
+.section {
+
+    margin-top: 26px;
+
+}
+
+
+.section-title {
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+
+    color: #667085;
+
+    margin-bottom: 10px;
+
+}
+
+
+/* ================================
+   YEAR BUTTON
+================================ */
+
+.year-button {
+
+    width: 100%;
+
+    padding: 12px;
+
+    margin-bottom: 8px;
+
+    border:
+
+        1px solid
+        #d0d5dd;
+
+    background: white;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    text-align: left;
+
+    transition: 0.2s;
+
+}
+
+
+.year-button:hover {
+
+    background: #edf7fa;
+
+}
+
+
+.year-button.active {
+
+    background: #0b6075;
+
+    color: white;
+
+    border-color: #0b6075;
+
+}
+
+
+/* ================================
+   LAYER
+================================ */
+
+.layer-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 8px 0;
+
+    font-size: 14px;
+
+}
+
+
+.layer-icon {
+
+    width: 16px;
+
+    height: 16px;
+
+    border-radius: 3px;
+
+}
+
+
+.coral {
+
+    background: #d96b7c;
+
+}
+
+
+.seagrass {
+
+    background: #5b9d6f;
+
+}
+
+
+.current {
+
+    background: #2878b5;
+
+}
+
+
+/* ================================
+   INFO BOX
+================================ */
+
+.info-box {
+
+    margin-top: 20px;
+
+    padding: 16px;
+
+    background: #f3f7f9;
+
+    border-radius: 9px;
+
+    border-left:
+
+        4px solid
+        #0b6075;
+
+}
+
+
+.info-box h3 {
+
+    margin:
+        0 0 8px;
+
+    font-size: 16px;
+
+}
+
+
+.info-box p {
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    color: #667085;
+
+}
+
+
+/* ================================
+   CONTENT
+================================ */
+
+.content {
+
+    flex: 1;
+
+    padding: 24px;
+
+    overflow-y: auto;
+
+}
+
+
+/* ================================
+   TOP TITLE
+================================ */
+
+.map-title {
+
+    margin-bottom: 18px;
+
+}
+
+
+.map-title h2 {
+
+    margin: 0;
+
+    font-size: 23px;
+
+}
+
+
+.map-title p {
+
+    margin: 6px 0 0;
+
+    color: #667085;
+
+    font-size: 14px;
+
+}
+
+
+/* ================================
+   MAP
+================================ */
+
+.map-container {
+
+    background: white;
+
+    padding: 18px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 2px 10px
+        rgba(0,0,0,0.08);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    min-height: 450px;
+
+}
+
+
+.map-images {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+.year-map {
+
+    display: none;
+
+    max-width: 100%;
+
+    max-height: 70vh;
+
+    object-fit: contain;
+
+}
+
+
+.year-map.active-map {
+
+    display: block;
+
+}
+
+
+/* ================================
+   DASHBOARD CARDS
+================================ */
+
+.dashboard {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 15px;
+
+    margin-top: 20px;
+
+}
+
+
+.card {
+
+    background: white;
+
+    padding: 18px;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 2px 8px
+        rgba(0,0,0,0.06);
+
+}
+
+
+.card-title {
+
+    font-size: 12px;
+
+    color: #667085;
+
+    margin-bottom: 7px;
+
+}
+
+
+.card-value {
+
+    font-size: 22px;
+
+    font-weight: 600;
+
+    color: #073b4c;
+
+}
+
+
+.card-description {
+
+    margin-top: 5px;
+
+    font-size: 12px;
+
+    color: #667085;
+
+}
+
+
+/* ================================
+   INFORMATION SECTIONS
+================================ */
+
+.panel {
+
+    background: white;
+
+    padding: 22px;
+
+    margin-top: 20px;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 2px 8px
+        rgba(0,0,0,0.06);
+
+}
+
+
+.panel h3 {
+
+    margin-top: 0;
+
+    font-size: 18px;
+
+}
+
+
+.panel p {
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+    color: #475467;
+
+}
+
+
+/* ================================
+   FOOTER
+================================ */
+
+.footer {
+
+    margin-top: 20px;
+
+    padding-bottom: 10px;
+
+    font-size: 12px;
+
+    color: #667085;
+
+}
+
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media(max-width: 900px) {
+
+    .container {
+
+        flex-direction: column;
+
+    }
+
+    .sidebar {
+
+        width: 100%;
+
+    }
+
+    .dashboard {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+</style>
+
 </head>
+
 
 <body>
 
-    <!-- HEADER -->
-    <div class="header">
 
-        <h1>
-            WebGIS Terumbu Karang, Lamun, dan Arus
-        </h1>
+<!-- =================================
+     HEADER
+================================= -->
 
-        <p>
-            Spatial-Temporal Visualization of Marine Ecosystems
-        </p>
+<header class="header">
 
-    </div>
+    <h1>
+        WebGIS Marine Ecosystem
+    </h1>
 
+    <p>
+        Spatial-Temporal Visualization of
+        Coral Reef, Seagrass and Ocean Dynamics
+    </p>
 
-    <!-- MAIN CONTENT -->
-    <div class="container">
-
-        <!-- SIDEBAR -->
-        <div class="sidebar">
-
-            <h2>Temporal Data</h2>
-
-            <p>
-                Pilih tahun untuk melihat hasil pemetaan.
-            </p>
-
-            <button
-                class="year-button active"
-                onclick="changeMap(2021, this)">
-                2021
-            </button>
-
-            <button
-                class="year-button"
-                onclick="changeMap(2024, this)">
-                2024
-            </button>
-
-            <button
-                class="year-button"
-                onclick="changeMap(2027, this)">
-                2027
-            </button>
-
-            <button
-                class="year-button"
-                onclick="changeMap(2030, this)">
-                2030
-            </button>
+</header>
 
 
-            <div class="info-box">
 
-                <h3 id="year-title">
-                    Tahun 2021
-                </h3>
+<!-- =================================
+     MAIN
+================================= -->
 
-                <p>
-                    Peta menunjukkan distribusi spasial
-                    terumbu karang dan lamun berdasarkan
-                    data pada tahun yang dipilih.
-                </p>
-
-            </div>
-
-        </div>
+<div class="container">
 
 
-        <!-- MAP -->
-        <div class="map-area">
+<!-- =================================
+     SIDEBAR
+================================= -->
 
-            <div class="map-title">
-
-                <h2 id="map-title">
-                    Peta Tahun 2021
-                </h2>
-
-                <p>
-                    Terumbu Karang dan Lamun
-                </p>
-
-            </div>
+<aside class="sidebar">
 
 
-            <div class="map-container">
-
-                <img
-                    id="map-image"
-                    src="./2021.png"
-                    alt="Peta tahun 2021"
-                    onerror="imageError()">
-
-            </div>
+<h2>
+    Marine Ecosystem
+</h2>
 
 
-            <div class="footer">
+<p style="
+    font-size:13px;
+    color:#667085;
+    line-height:1.5;
+">
 
-                Source: Spatial analysis and mapping project
+    Interactive visualization of
+    marine ecosystem distribution
+    across different years.
 
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <script>
-
-        function changeMap(year, button) {
-
-            const image = document.getElementById("map-image");
-
-            // Ganti gambar
-            image.src = "./" + year + ".png";
-
-            // Ganti alt text
-            image.alt = "Peta tahun " + year;
-
-            // Ganti judul
-            document.getElementById("map-title").innerText =
-                "Peta Tahun " + year;
-
-            document.getElementById("year-title").innerText =
-                "Tahun " + year;
-
-            // Hapus active dari semua tombol
-            const buttons =
-                document.querySelectorAll(".year-button");
-
-            buttons.forEach(function(btn) {
-                btn.classList.remove("active");
-            });
-
-            // Aktifkan tombol yang dipilih
-            button.classList.add("active");
-
-        }
+</p>
 
 
-        function imageError() {
 
-            alert(
-                "Gambar tidak ditemukan. Pastikan nama file PNG di GitHub sama dengan tahun yang dipilih."
-            );
+<!-- TEMPORAL -->
 
-        }
+<div class="section">
 
-    </script>
+<div class="section-title">
+    Temporal Data
+</div>
+
+
+<button
+    class="year-button active"
+    onclick="changeMap(2021,this)">
+
+    2021
+
+</button>
+
+
+<button
+    class="year-button"
+    onclick="changeMap(2024,this)">
+
+    2024
+
+</button>
+
+
+<button
+    class="year-button"
+    onclick="changeMap(2027,this)">
+
+    2027
+
+</button>
+
+
+<button
+    class="year-button"
+    onclick="changeMap(2030,this)">
+
+    2030
+
+</button>
+
+</div>
+
+
+
+<!-- LAYERS -->
+
+<div class="section">
+
+<div class="section-title">
+    Map Layers
+</div>
+
+
+<div class="layer-item">
+
+    <span class="layer-icon coral"></span>
+
+    Coral Reef
+
+</div>
+
+
+<div class="layer-item">
+
+    <span class="layer-icon seagrass"></span>
+
+    Seagrass
+
+</div>
+
+
+<div class="layer-item">
+
+    <span class="layer-icon current"></span>
+
+    Ocean Current
+
+</div>
+
+</div>
+
+
+
+<!-- INFO -->
+
+<div class="info-box">
+
+<h3 id="year-title">
+    2021
+</h3>
+
+
+<p id="year-description">
+
+    Spatial distribution of
+    coral reef and seagrass
+    ecosystems for the selected year.
+
+</p>
+
+</div>
+
+
+</aside>
+
+
+
+<!-- =================================
+     CONTENT
+================================= -->
+
+<main class="content">
+
+
+
+<!-- TITLE -->
+
+<div class="map-title">
+
+<h2 id="map-title">
+
+    Spatial Distribution — 2021
+
+</h2>
+
+
+<p>
+
+    Coral Reef and Seagrass Ecosystem
+
+</p>
+
+</div>
+
+
+
+<!-- MAP -->
+
+<div class="map-container">
+
+
+<div class="map-images">
+
+
+<img
+    id="map-2021"
+    class="year-map active-map"
+    src="./2021.png"
+    alt="Map 2021">
+
+
+<img
+    id="map-2024"
+    class="year-map"
+    src="./2024.png"
+    alt="Map 2024">
+
+
+<img
+    id="map-2027"
+    class="year-map"
+    src="./2027.png"
+    alt="Map 2027">
+
+
+<img
+    id="map-2030"
+    class="year-map"
+    src="./2030.png"
+    alt="Map 2030">
+
+
+</div>
+
+</div>
+
+
+
+<!-- =================================
+     DASHBOARD
+================================= -->
+
+<div class="dashboard">
+
+
+<div class="card">
+
+<div class="card-title">
+    SELECTED YEAR
+</div>
+
+<div
+    class="card-value"
+    id="dashboard-year">
+
+    2021
+
+</div>
+
+<div class="card-description">
+
+    Temporal observation
+
+</div>
+
+</div>
+
+
+
+<div class="card">
+
+<div class="card-title">
+    CORAL REEF
+</div>
+
+<div
+    class="card-value"
+    id="coral-area">
+
+    27.50 km²
+
+</div>
+
+<div class="card-description">
+
+    Spatial extent
+
+</div>
+
+</div>
+
+
+
+<div class="card">
+
+<div class="card-title">
+    OCEAN CURRENT
+</div>
+
+<div class="card-value">
+
+    Coming Soon
+
+</div>
+
+<div class="card-description">
+
+    Near-real-time integration
+
+</div>
+
+</div>
+
+
+</div>
+
+
+
+<!-- =================================
+     ABOUT
+================================= -->
+
+<section class="panel">
+
+<h3>
+    About This Project
+</h3>
+
+
+<p>
+
+This WebGIS presents the spatial and
+temporal distribution of coral reef and
+seagrass ecosystems. The platform is
+designed to support visualization and
+interpretation of marine ecosystem
+changes across different observation
+years.
+
+</p>
+
+
+<p>
+
+The system combines spatial mapping,
+temporal visualization and marine
+environmental information within an
+interactive web-based interface.
+
+</p>
+
+</section>
+
+
+
+<!-- =================================
+     METHODOLOGY
+================================= -->
+
+<section class="panel">
+
+<h3>
+    Data & Methodology
+</h3>
+
+
+<p>
+
+<strong>Spatial Data:</strong>
+Coral reef and seagrass distribution
+maps.
+
+</p>
+
+
+<p>
+
+<strong>Temporal Analysis:</strong>
+Comparison of ecosystem distribution
+across 2021, 2024, 2027 and 2030.
+
+</p>
+
+
+<p>
+
+<strong>Visualization:</strong>
+Web-based spatial-temporal visualization
+using HTML, CSS and JavaScript.
+
+</p>
+
+
+<p>
+
+<strong>Oceanographic Data:</strong>
+Ocean current integration is planned
+for future development using
+oceanographic data services.
+
+</p>
+
+</section>
+
+
+
+<!-- =================================
+     FOOTER
+================================= -->
+
+<div class="footer">
+
+    WebGIS Marine Ecosystem |
+    Spatial Analysis & Visualization
+
+</div>
+
+
+</main>
+
+</div>
+
+
+
+<!-- =================================
+     JAVASCRIPT
+================================= -->
+
+<script>
+
+
+function changeMap(year, button) {
+
+
+    /*
+       Hide all maps
+    */
+
+    const maps =
+        document.querySelectorAll(".year-map");
+
+
+    maps.forEach(function(map) {
+
+        map.classList.remove(
+            "active-map"
+        );
+
+    });
+
+
+
+    /*
+       Show selected map
+    */
+
+    const selectedMap =
+        document.getElementById(
+            "map-" + year
+        );
+
+
+    if(selectedMap) {
+
+        selectedMap.classList.add(
+            "active-map"
+        );
+
+    }
+
+
+
+    /*
+       Update titles
+    */
+
+    document.getElementById(
+        "map-title"
+    ).innerText =
+        "Spatial Distribution — " + year;
+
+
+    document.getElementById(
+        "year-title"
+    ).innerText =
+        year;
+
+
+    document.getElementById(
+        "dashboard-year"
+    ).innerText =
+        year;
+
+
+
+    /*
+       Update buttons
+    */
+
+    const buttons =
+        document.querySelectorAll(
+            ".year-button"
+        );
+
+
+    buttons.forEach(function(btn) {
+
+        btn.classList.remove(
+            "active"
+        );
+
+    });
+
+
+    button.classList.add(
+        "active"
+    );
+
+
+
+    /*
+       Update coral reef area
+       based on selected year
+    */
+
+    const coralArea = {
+
+        2021: "27.50 km²",
+
+        2024: "35.24 km²",
+
+        2027: "27.18 km²",
+
+        2030: "30.17 km²"
+
+    };
+
+
+    document.getElementById(
+        "coral-area"
+    ).innerText =
+        coralArea[year];
+
+}
+
+
+</script>
+
 
 </body>
+
 </html>
