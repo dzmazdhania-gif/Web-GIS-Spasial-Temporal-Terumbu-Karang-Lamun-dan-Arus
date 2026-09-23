@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>WebGIS Terumbu Karang dan Lamun</title>
+    <title>WebGIS Terumbu Karang, Lamun, dan Arus</title>
 
     <style>
         * {
@@ -53,11 +53,6 @@
         .sidebar h2 {
             margin-top: 0;
             font-size: 20px;
-        }
-
-        .sidebar h3 {
-            margin-top: 25px;
-            font-size: 15px;
         }
 
         .year-button {
@@ -125,6 +120,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 400px;
         }
 
         .map-container img {
@@ -134,7 +130,6 @@
             border-radius: 5px;
         }
 
-        /* FOOTER */
         .footer {
             margin-top: 10px;
             font-size: 12px;
@@ -179,7 +174,6 @@
     <!-- MAIN CONTENT -->
     <div class="container">
 
-
         <!-- SIDEBAR -->
         <div class="sidebar">
 
@@ -188,9 +182,6 @@
             <p>
                 Pilih tahun untuk melihat hasil pemetaan.
             </p>
-
-
-            <!-- YEAR BUTTONS -->
 
             <button
                 class="year-button active"
@@ -217,8 +208,6 @@
             </button>
 
 
-            <!-- INFORMATION -->
-
             <div class="info-box">
 
                 <h3 id="year-title">
@@ -233,12 +222,10 @@
 
             </div>
 
-
         </div>
 
 
         <!-- MAP -->
-
         <div class="map-area">
 
             <div class="map-title">
@@ -258,8 +245,9 @@
 
                 <img
                     id="map-image"
-                    src="2021.png"
-                    alt="Peta tahun 2021">
+                    src="./2021.png"
+                    alt="Peta tahun 2021"
+                    onerror="imageError()">
 
             </div>
 
@@ -275,43 +263,44 @@
     </div>
 
 
-    <!-- JAVASCRIPT -->
-
     <script>
 
         function changeMap(year, button) {
 
-            // Change image
+            const image = document.getElementById("map-image");
 
-            document.getElementById("map-image").src =
-                year + ".png";
+            // Ganti gambar
+            image.src = "./" + year + ".png";
 
+            // Ganti alt text
+            image.alt = "Peta tahun " + year;
 
-            // Change title
-
+            // Ganti judul
             document.getElementById("map-title").innerText =
                 "Peta Tahun " + year;
-
 
             document.getElementById("year-title").innerText =
                 "Tahun " + year;
 
-
-            // Remove active state
-
+            // Hapus active dari semua tombol
             const buttons =
                 document.querySelectorAll(".year-button");
 
             buttons.forEach(function(btn) {
-
                 btn.classList.remove("active");
-
             });
 
-
-            // Activate selected button
-
+            // Aktifkan tombol yang dipilih
             button.classList.add("active");
+
+        }
+
+
+        function imageError() {
+
+            alert(
+                "Gambar tidak ditemukan. Pastikan nama file PNG di GitHub sama dengan tahun yang dipilih."
+            );
 
         }
 
