@@ -1,1080 +1,1719 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<title>Marine Ecosystem Spatial Data Portal</title>
 
-<title>
-WebGIS | Coral Reef, Seagrass & Ocean Current
-</title>
+<!-- Leaflet -->
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
 
 <style>
 
-/* ================================
-   GLOBAL
-================================ */
-
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
-
-    margin: 0;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background: #eef4f7;
-
-    color: #1f2933;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f8f8;
+    color: #173b43;
 }
 
-
-/* ================================
+/* =========================
    HEADER
-================================ */
+========================= */
 
-.header {
-
-    background:
-        linear-gradient(
-            135deg,
-            #073b4c,
-            #0b6075
-        );
-
+header {
+    background: linear-gradient(135deg, #063b43, #087f8c);
     color: white;
-
-    padding: 24px 32px;
-
+    padding: 28px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
-.header h1 {
-
-    margin: 0;
-
-    font-size: 27px;
-
-    font-weight: 600;
-
+.header-container {
+    max-width: 1400px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
 }
 
-.header p {
-
-    margin: 7px 0 0;
-
-    font-size: 14px;
-
-    opacity: 0.9;
-
+.logo-area h1 {
+    font-size: 25px;
+    letter-spacing: 0.5px;
 }
 
+.logo-area p {
+    margin-top: 6px;
+    font-size: 13px;
+    opacity: 0.85;
+}
 
-/* ================================
-   MAIN LAYOUT
-================================ */
+nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 9px 13px;
+    border-radius: 7px;
+    transition: 0.2s;
+}
+
+nav a:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+    background: linear-gradient(135deg, #0b5964, #14a0ad);
+    color: white;
+    padding: 65px 30px;
+}
+
+.hero-content {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.hero h2 {
+    font-size: 42px;
+    max-width: 850px;
+    line-height: 1.15;
+}
+
+.hero p {
+    margin-top: 18px;
+    max-width: 760px;
+    line-height: 1.7;
+    font-size: 16px;
+    opacity: 0.92;
+}
+
+.hero-tag {
+    display: inline-block;
+    padding: 7px 12px;
+    background: rgba(255,255,255,0.16);
+    border-radius: 20px;
+    font-size: 12px;
+    margin-bottom: 18px;
+}
+
+/* =========================
+   MAIN
+========================= */
 
 .container {
-
-    display: flex;
-
-    min-height:
-        calc(100vh - 96px);
-
+    max-width: 1400px;
+    margin: auto;
+    padding: 40px 30px;
 }
-
-
-/* ================================
-   SIDEBAR
-================================ */
-
-.sidebar {
-
-    width: 310px;
-
-    background: white;
-
-    padding: 24px;
-
-    box-shadow:
-        2px 0 10px
-        rgba(0,0,0,0.08);
-
-    overflow-y: auto;
-
-}
-
-
-.sidebar h2 {
-
-    margin-top: 0;
-
-    font-size: 20px;
-
-}
-
 
 .section {
-
-    margin-top: 26px;
-
+    margin-bottom: 55px;
 }
-
 
 .section-title {
-
-    font-size: 13px;
-
-    font-weight: bold;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.5px;
-
-    color: #667085;
-
-    margin-bottom: 10px;
-
+    margin-bottom: 25px;
 }
 
-
-/* ================================
-   YEAR BUTTON
-================================ */
-
-.year-button {
-
-    width: 100%;
-
-    padding: 12px;
-
-    margin-bottom: 8px;
-
-    border:
-
-        1px solid
-        #d0d5dd;
-
-    background: white;
-
-    border-radius: 7px;
-
-    cursor: pointer;
-
-    font-size: 14px;
-
-    text-align: left;
-
-    transition: 0.2s;
-
+.section-title h2 {
+    font-size: 26px;
+    color: #0b4f59;
 }
 
-
-.year-button:hover {
-
-    background: #edf7fa;
-
-}
-
-
-.year-button.active {
-
-    background: #0b6075;
-
-    color: white;
-
-    border-color: #0b6075;
-
-}
-
-
-/* ================================
-   LAYER
-================================ */
-
-.layer-item {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    padding: 8px 0;
-
-    font-size: 14px;
-
-}
-
-
-.layer-icon {
-
-    width: 16px;
-
-    height: 16px;
-
-    border-radius: 3px;
-
-}
-
-
-.coral {
-
-    background: #d96b7c;
-
-}
-
-
-.seagrass {
-
-    background: #5b9d6f;
-
-}
-
-
-.current {
-
-    background: #2878b5;
-
-}
-
-
-/* ================================
-   INFO BOX
-================================ */
-
-.info-box {
-
-    margin-top: 20px;
-
-    padding: 16px;
-
-    background: #f3f7f9;
-
-    border-radius: 9px;
-
-    border-left:
-
-        4px solid
-        #0b6075;
-
-}
-
-
-.info-box h3 {
-
-    margin:
-        0 0 8px;
-
-    font-size: 16px;
-
-}
-
-
-.info-box p {
-
-    font-size: 13px;
-
+.section-title p {
+    margin-top: 8px;
+    color: #60777c;
     line-height: 1.6;
-
-    color: #667085;
-
 }
 
-
-/* ================================
-   CONTENT
-================================ */
-
-.content {
-
-    flex: 1;
-
-    padding: 24px;
-
-    overflow-y: auto;
-
-}
-
-
-/* ================================
-   TOP TITLE
-================================ */
-
-.map-title {
-
-    margin-bottom: 18px;
-
-}
-
-
-.map-title h2 {
-
-    margin: 0;
-
-    font-size: 23px;
-
-}
-
-
-.map-title p {
-
-    margin: 6px 0 0;
-
-    color: #667085;
-
-    font-size: 14px;
-
-}
-
-
-/* ================================
-   MAP
-================================ */
-
-.map-container {
-
-    background: white;
-
-    padding: 18px;
-
-    border-radius: 12px;
-
-    box-shadow:
-        0 2px 10px
-        rgba(0,0,0,0.08);
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    min-height: 450px;
-
-}
-
-
-.map-images {
-
-    width: 100%;
-
-    height: 100%;
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-}
-
-
-.year-map {
-
-    display: none;
-
-    max-width: 100%;
-
-    max-height: 70vh;
-
-    object-fit: contain;
-
-}
-
-
-.year-map.active-map {
-
-    display: block;
-
-}
-
-
-/* ================================
-   DASHBOARD CARDS
-================================ */
+/* =========================
+   DASHBOARD
+========================= */
 
 .dashboard {
-
     display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 15px;
-
-    margin-top: 20px;
-
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
 }
-
 
 .card {
-
     background: white;
-
-    padding: 18px;
-
-    border-radius: 10px;
-
-    box-shadow:
-        0 2px 8px
-        rgba(0,0,0,0.06);
-
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(20,70,75,0.08);
+    border: 1px solid #e0eeee;
 }
 
-
-.card-title {
-
+.card-label {
     font-size: 12px;
-
-    color: #667085;
-
-    margin-bottom: 7px;
-
+    color: #71868a;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
 }
-
 
 .card-value {
-
-    font-size: 22px;
-
-    font-weight: 600;
-
-    color: #073b4c;
-
+    margin-top: 9px;
+    font-size: 29px;
+    font-weight: bold;
+    color: #087f8c;
 }
-
 
 .card-description {
-
-    margin-top: 5px;
-
+    margin-top: 8px;
     font-size: 12px;
-
-    color: #667085;
-
+    color: #74878b;
 }
 
+/* =========================
+   MAP SECTION
+========================= */
 
-/* ================================
-   INFORMATION SECTIONS
-================================ */
+.map-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+}
 
-.panel {
-
+.sidebar {
     background: white;
-
+    border-radius: 14px;
     padding: 22px;
+    box-shadow: 0 5px 20px rgba(20,70,75,0.08);
+    border: 1px solid #e0eeee;
+}
 
-    margin-top: 20px;
+.sidebar h3 {
+    font-size: 17px;
+    margin-bottom: 15px;
+}
 
+.year-buttons {
+    display: grid;
+    gap: 10px;
+}
+
+.year-button {
+    border: 1px solid #cbdfe1;
+    background: white;
+    color: #24565e;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.year-button:hover {
+    background: #edf8f9;
+}
+
+.year-button.active {
+    background: #087f8c;
+    color: white;
+    border-color: #087f8c;
+}
+
+.layer-list {
+    margin-top: 30px;
+}
+
+.layer-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+.legend-box {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.coral {
+    background: #ef8c9b;
+}
+
+.seagrass {
+    background: #73b66b;
+}
+
+.current {
+    background: #4389d9;
+}
+
+.map-panel {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 5px 20px rgba(20,70,75,0.08);
+    border: 1px solid #e0eeee;
+}
+
+.map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.map-header h3 {
+    font-size: 19px;
+}
+
+.status {
+    font-size: 11px;
+    background: #edf8f9;
+    color: #087f8c;
+    padding: 7px 10px;
+    border-radius: 15px;
+}
+
+.map-container {
+    background: #eaf2f3;
     border-radius: 10px;
-
-    box-shadow:
-        0 2px 8px
-        rgba(0,0,0,0.06);
-
+    overflow: hidden;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-
-.panel h3 {
-
-    margin-top: 0;
-
-    font-size: 18px;
-
+.year-map {
+    width: 100%;
+    max-height: 650px;
+    object-fit: contain;
+    display: none;
 }
 
-
-.panel p {
-
-    font-size: 14px;
-
-    line-height: 1.7;
-
-    color: #475467;
-
+.year-map.active-map {
+    display: block;
 }
 
+/* =========================
+   INFO PANEL
+========================= */
 
-/* ================================
-   FOOTER
-================================ */
+.info-panel {
+    margin-top: 18px;
+    background: #f5fafb;
+    border-left: 4px solid #087f8c;
+    padding: 17px;
+    border-radius: 7px;
+}
 
-.footer {
+.info-panel h4 {
+    margin-bottom: 7px;
+}
 
-    margin-top: 20px;
+.info-panel p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #5d7074;
+}
 
-    padding-bottom: 10px;
+/* =========================
+   ANALYSIS
+========================= */
 
+.analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.analysis-card {
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(20,70,75,0.08);
+    border: 1px solid #e0eeee;
+}
+
+.analysis-card h3 {
+    margin-bottom: 20px;
+}
+
+.bar-chart {
+    display: flex;
+    align-items: end;
+    justify-content: space-around;
+    height: 280px;
+    border-bottom: 1px solid #ccdfe1;
+    padding: 20px 10px 0;
+}
+
+.bar-wrapper {
+    height: 100%;
+    width: 16%;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+}
+
+.bar {
+    width: 65%;
+    background: #087f8c;
+    border-radius: 5px 5px 0 0;
+    min-height: 10px;
+    transition: 0.3s;
+}
+
+.bar:hover {
+    opacity: 0.75;
+}
+
+.bar-value {
+    font-size: 11px;
+    margin-bottom: 5px;
+}
+
+.bar-year {
+    margin-top: 8px;
     font-size: 12px;
-
-    color: #667085;
-
+    color: #61767b;
 }
 
+.change-list {
+    display: grid;
+    gap: 14px;
+}
 
-/* ================================
+.change-item {
+    padding: 15px;
+    border-radius: 9px;
+    background: #f5fafb;
+    display: flex;
+    justify-content: space-between;
+}
+
+.change-item span:first-child {
+    color: #61767b;
+    font-size: 13px;
+}
+
+.change-value {
+    font-weight: bold;
+    color: #087f8c;
+}
+
+/* =========================
+   OCEAN CURRENT
+========================= */
+
+.current-section {
+    background: linear-gradient(135deg, #073e49, #0a6571);
+    color: white;
+    padding: 40px 30px;
+}
+
+.current-content {
+    max-width: 1400px;
+    margin: auto;
+}
+
+.current-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 25px;
+}
+
+.current-map {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    min-height: 430px;
+    border-radius: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 30px;
+}
+
+.current-placeholder {
+    max-width: 500px;
+}
+
+.current-placeholder .icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+}
+
+.current-placeholder h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.current-placeholder p {
+    line-height: 1.7;
+    opacity: 0.8;
+    font-size: 14px;
+}
+
+.current-info {
+    display: grid;
+    gap: 15px;
+}
+
+.current-card {
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.current-card small {
+    opacity: 0.65;
+}
+
+.current-card strong {
+    display: block;
+    margin-top: 8px;
+    font-size: 22px;
+}
+
+/* =========================
+   METHODOLOGY
+========================= */
+
+.method-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.method-card {
+    background: white;
+    border: 1px solid #e0eeee;
+    border-radius: 14px;
+    padding: 24px;
+}
+
+.method-number {
+    width: 35px;
+    height: 35px;
+    background: #e9f6f7;
+    color: #087f8c;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.method-card h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.method-card p,
+.method-card li {
+    font-size: 13px;
+    color: #63777b;
+    line-height: 1.6;
+}
+
+.method-card ul {
+    padding-left: 17px;
+}
+
+/* =========================
+   METADATA
+========================= */
+
+.metadata-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(20,70,75,0.06);
+}
+
+.metadata-table th,
+.metadata-table td {
+    padding: 15px;
+    border-bottom: 1px solid #e2eeee;
+    text-align: left;
+    font-size: 13px;
+}
+
+.metadata-table th {
+    background: #edf7f8;
+    color: #315960;
+}
+
+.metadata-table td {
+    color: #61767b;
+}
+
+/* =========================
+   ABOUT
+========================= */
+
+.about-box {
+    background: white;
+    padding: 30px;
+    border-radius: 14px;
+    border: 1px solid #e0eeee;
+    box-shadow: 0 5px 20px rgba(20,70,75,0.06);
+}
+
+.about-box p {
+    color: #60757a;
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer {
+    background: #052f36;
+    color: white;
+    padding: 35px 30px;
+    margin-top: 30px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: auto;
+    text-align: center;
+}
+
+.footer-content p {
+    font-size: 12px;
+    opacity: 0.7;
+    line-height: 1.7;
+}
+
+/* =========================
    RESPONSIVE
-================================ */
+========================= */
 
-@media(max-width: 900px) {
-
-    .container {
-
-        flex-direction: column;
-
-    }
-
-    .sidebar {
-
-        width: 100%;
-
-    }
+@media(max-width: 1000px) {
 
     .dashboard {
-
-        grid-template-columns:
-            1fr;
-
+        grid-template-columns: repeat(2, 1fr);
     }
 
+    .method-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .current-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .map-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 700px) {
+
+    header {
+        padding: 20px;
+    }
+
+    .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    nav {
+        width: 100%;
+    }
+
+    .hero h2 {
+        font-size: 30px;
+    }
+
+    .container {
+        padding: 30px 18px;
+    }
+
+    .dashboard,
+    .analysis-grid,
+    .method-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .map-container {
+        min-height: 300px;
+    }
+
+    .current-section {
+        padding: 35px 18px;
+    }
 }
 
 </style>
-
 </head>
-
 
 <body>
 
-
-<!-- =================================
+<!-- =========================
      HEADER
-================================= -->
+========================= -->
 
-<header class="header">
+<header>
 
-    <h1>
-        WebGIS Marine Ecosystem
-    </h1>
+<div class="header-container">
 
-    <p>
-        Spatial-Temporal Visualization of
-        Coral Reef, Seagrass and Ocean Dynamics
-    </p>
+    <div class="logo-area">
+        <h1>🌊 Marine Spatial Data Portal</h1>
+        <p>Coral Reef • Seagrass • Ocean Current</p>
+    </div>
+
+    <nav>
+        <a href="#overview">Overview</a>
+        <a href="#temporal">Temporal</a>
+        <a href="#analysis">Analysis</a>
+        <a href="#current">Ocean Current</a>
+        <a href="#methodology">Methodology</a>
+    </nav>
+
+</div>
 
 </header>
 
 
+<!-- =========================
+     HERO
+========================= -->
 
-<!-- =================================
-     MAIN
-================================= -->
+<section class="hero">
 
-<div class="container">
+<div class="hero-content">
 
+    <span class="hero-tag">
+        WEB GIS • MARINE ECOSYSTEM • SPATIAL ANALYSIS
+    </span>
 
-<!-- =================================
-     SIDEBAR
-================================= -->
+    <h2>
+        Spatial–Temporal Mapping of Coral Reef,
+        Seagrass and Oceanographic Conditions
+    </h2>
 
-<aside class="sidebar">
+    <p>
+        An interactive spatial data portal designed to visualize
+        marine ecosystem distribution, temporal changes, and
+        oceanographic information through GIS and remote sensing.
+    </p>
 
+</div>
 
-<h2>
-    Marine Ecosystem
-</h2>
-
-
-<p style="
-    font-size:13px;
-    color:#667085;
-    line-height:1.5;
-">
-
-    Interactive visualization of
-    marine ecosystem distribution
-    across different years.
-
-</p>
+</section>
 
 
+<main class="container">
 
-<!-- TEMPORAL -->
 
-<div class="section">
+<!-- =========================
+     OVERVIEW
+========================= -->
+
+<section id="overview" class="section">
 
 <div class="section-title">
-    Temporal Data
-</div>
 
+    <h2>Marine Ecosystem Dashboard</h2>
 
-<button
-    class="year-button active"
-    onclick="changeMap(2021,this)">
-
-    2021
-
-</button>
-
-
-<button
-    class="year-button"
-    onclick="changeMap(2024,this)">
-
-    2024
-
-</button>
-
-
-<button
-    class="year-button"
-    onclick="changeMap(2027,this)">
-
-    2027
-
-</button>
-
-
-<button
-    class="year-button"
-    onclick="changeMap(2030,this)">
-
-    2030
-
-</button>
+    <p>
+        Overview of the spatial-temporal dataset and ecosystem
+        information available in this WebGIS.
+    </p>
 
 </div>
 
 
+<div class="dashboard">
 
-<!-- LAYERS -->
+    <div class="card">
 
-<div class="section">
+        <div class="card-label">
+            Selected Year
+        </div>
+
+        <div class="card-value" id="dashboard-year">
+            2021
+        </div>
+
+        <div class="card-description">
+            Temporal reference
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-label">
+            Coral Reef Area
+        </div>
+
+        <div class="card-value" id="coral-area">
+            27.50 km²
+        </div>
+
+        <div class="card-description">
+            Spatial extent
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-label">
+            Ecosystem Layers
+        </div>
+
+        <div class="card-value">
+            2+
+        </div>
+
+        <div class="card-description">
+            Coral reef & seagrass
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-label">
+            Ocean Current
+        </div>
+
+        <div class="card-value">
+            Ready
+        </div>
+
+        <div class="card-description">
+            Layer integration stage
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     TEMPORAL MAP
+========================= -->
+
+<section id="temporal" class="section">
 
 <div class="section-title">
-    Map Layers
-</div>
 
+    <h2>Temporal Spatial Distribution</h2>
 
-<div class="layer-item">
-
-    <span class="layer-icon coral"></span>
-
-    Coral Reef
+    <p>
+        Explore the spatial distribution of marine ecosystems
+        across different temporal scenarios.
+    </p>
 
 </div>
 
 
-<div class="layer-item">
-
-    <span class="layer-icon seagrass"></span>
-
-    Seagrass
-
-</div>
+<div class="map-layout">
 
 
-<div class="layer-item">
+<!-- SIDEBAR -->
 
-    <span class="layer-icon current"></span>
+<div class="sidebar">
 
-    Ocean Current
+    <h3>Temporal Layer</h3>
 
-</div>
+    <div class="year-buttons">
 
-</div>
+        <button
+            class="year-button active"
+            onclick="changeMap(2021, this)">
+            2021
+        </button>
 
+        <button
+            class="year-button"
+            onclick="changeMap(2024, this)">
+            2024
+        </button>
 
+        <button
+            class="year-button"
+            onclick="changeMap(2027, this)">
+            2027
+        </button>
 
-<!-- INFO -->
+        <button
+            class="year-button"
+            onclick="changeMap(2030, this)">
+            2030
+        </button>
 
-<div class="info-box">
-
-<h3 id="year-title">
-    2021
-</h3>
-
-
-<p id="year-description">
-
-    Spatial distribution of
-    coral reef and seagrass
-    ecosystems for the selected year.
-
-</p>
-
-</div>
-
-
-</aside>
-
-
-
-<!-- =================================
-     CONTENT
-================================= -->
-
-<main class="content">
+    </div>
 
 
+    <div class="layer-list">
 
-<!-- TITLE -->
+        <h3>Map Layers</h3>
 
-<div class="map-title">
+        <div class="layer-item">
+            <span class="legend-box coral"></span>
+            Coral Reef
+        </div>
 
-<h2 id="map-title">
+        <div class="layer-item">
+            <span class="legend-box seagrass"></span>
+            Seagrass
+        </div>
 
-    Spatial Distribution — 2021
+        <div class="layer-item">
+            <span class="legend-box current"></span>
+            Ocean Current
+        </div>
 
-</h2>
-
-
-<p>
-
-    Coral Reef and Seagrass Ecosystem
-
-</p>
+    </div>
 
 </div>
-
 
 
 <!-- MAP -->
 
-<div class="map-container">
+<div class="map-panel">
+
+    <div class="map-header">
+
+        <h3 id="map-title">
+            Spatial Distribution — 2021
+        </h3>
+
+        <span class="status">
+            Spatial Dataset
+        </span>
+
+    </div>
 
 
-<div class="map-images">
+    <div class="map-container">
+
+        <img
+            id="map-2021"
+            class="year-map active-map"
+            src="./2021.png"
+            alt="Marine ecosystem map 2021"
+        >
+
+        <img
+            id="map-2024"
+            class="year-map"
+            src="./2024.png"
+            alt="Marine ecosystem map 2024"
+        >
+
+        <img
+            id="map-2027"
+            class="year-map"
+            src="./2027.png"
+            alt="Marine ecosystem map 2027"
+        >
+
+        <img
+            id="map-2030"
+            class="year-map"
+            src="./2030.png"
+            alt="Marine ecosystem map 2030"
+        >
+
+    </div>
 
 
-<img
-    id="map-2021"
-    class="year-map active-map"
-    src="./2021.png"
-    alt="Map 2021">
+    <div class="info-panel">
 
+        <h4>
+            Temporal Reference:
+            <span id="year-title">2021</span>
+        </h4>
 
-<img
-    id="map-2024"
-    class="year-map"
-    src="./2024.png"
-    alt="Map 2024">
+        <p>
+            Select another year from the temporal layer panel
+            to compare the spatial distribution of the mapped
+            marine ecosystems.
+        </p>
 
-
-<img
-    id="map-2027"
-    class="year-map"
-    src="./2027.png"
-    alt="Map 2027">
-
-
-<img
-    id="map-2030"
-    class="year-map"
-    src="./2030.png"
-    alt="Map 2030">
-
-
-</div>
-
-</div>
-
-
-
-<!-- =================================
-     DASHBOARD
-================================= -->
-
-<div class="dashboard">
-
-
-<div class="card">
-
-<div class="card-title">
-    SELECTED YEAR
-</div>
-
-<div
-    class="card-value"
-    id="dashboard-year">
-
-    2021
-
-</div>
-
-<div class="card-description">
-
-    Temporal observation
+    </div>
 
 </div>
 
 </div>
-
-
-
-<div class="card">
-
-<div class="card-title">
-    CORAL REEF
-</div>
-
-<div
-    class="card-value"
-    id="coral-area">
-
-    27.50 km²
-
-</div>
-
-<div class="card-description">
-
-    Spatial extent
-
-</div>
-
-</div>
-
-
-
-<div class="card">
-
-<div class="card-title">
-    OCEAN CURRENT
-</div>
-
-<div class="card-value">
-
-    Coming Soon
-
-</div>
-
-<div class="card-description">
-
-    Near-real-time integration
-
-</div>
-
-</div>
-
-
-</div>
-
-
-
-<!-- =================================
-     ABOUT
-================================= -->
-
-<section class="panel">
-
-<h3>
-    About This Project
-</h3>
-
-
-<p>
-
-This WebGIS presents the spatial and
-temporal distribution of coral reef and
-seagrass ecosystems. The platform is
-designed to support visualization and
-interpretation of marine ecosystem
-changes across different observation
-years.
-
-</p>
-
-
-<p>
-
-The system combines spatial mapping,
-temporal visualization and marine
-environmental information within an
-interactive web-based interface.
-
-</p>
 
 </section>
 
 
+<!-- =========================
+     SPATIAL ANALYSIS
+========================= -->
 
-<!-- =================================
+<section id="analysis" class="section">
+
+<div class="section-title">
+
+    <h2>Spatial & Temporal Analysis</h2>
+
+    <p>
+        Summary of the observed changes in ecosystem spatial extent
+        across the available temporal datasets.
+    </p>
+
+</div>
+
+
+<div class="analysis-grid">
+
+
+<!-- BAR CHART -->
+
+<div class="analysis-card">
+
+    <h3>Coral Reef Area by Year</h3>
+
+    <div class="bar-chart">
+
+        <div class="bar-wrapper">
+
+            <div class="bar-value">
+                27.50
+            </div>
+
+            <div
+                class="bar"
+                style="height: 72%;">
+            </div>
+
+            <div class="bar-year">
+                2021
+            </div>
+
+        </div>
+
+
+        <div class="bar-wrapper">
+
+            <div class="bar-value">
+                35.24
+            </div>
+
+            <div
+                class="bar"
+                style="height: 92%;">
+            </div>
+
+            <div class="bar-year">
+                2024
+            </div>
+
+        </div>
+
+
+        <div class="bar-wrapper">
+
+            <div class="bar-value">
+                27.18
+            </div>
+
+            <div
+                class="bar"
+                style="height: 71%;">
+            </div>
+
+            <div class="bar-year">
+                2027
+            </div>
+
+        </div>
+
+
+        <div class="bar-wrapper">
+
+            <div class="bar-value">
+                30.17
+            </div>
+
+            <div
+                class="bar"
+                style="height: 79%;">
+            </div>
+
+            <div class="bar-year">
+                2030
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- CHANGE -->
+
+<div class="analysis-card">
+
+    <h3>Temporal Change</h3>
+
+    <div class="change-list">
+
+        <div class="change-item">
+
+            <span>
+                2021 → 2024
+            </span>
+
+            <span class="change-value">
+                +28.15%
+            </span>
+
+        </div>
+
+
+        <div class="change-item">
+
+            <span>
+                2024 → 2027
+            </span>
+
+            <span class="change-value">
+                −22.87%
+            </span>
+
+        </div>
+
+
+        <div class="change-item">
+
+            <span>
+                2027 → 2030
+            </span>
+
+            <span class="change-value">
+                +11.00%
+            </span>
+
+        </div>
+
+
+        <div class="change-item">
+
+            <span>
+                2021 → 2030
+            </span>
+
+            <span class="change-value">
+                +9.71%
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<!-- =========================
+     OCEAN CURRENT
+========================= -->
+
+<section id="current" class="current-section">
+
+<div class="current-content">
+
+    <div class="section-title">
+
+        <h2 style="color:white;">
+            Ocean Current Monitoring
+        </h2>
+
+        <p style="color:rgba(255,255,255,0.75);">
+            A dedicated section for integrating ocean current
+            information into the marine ecosystem spatial analysis.
+        </p>
+
+    </div>
+
+
+    <div class="current-grid">
+
+
+        <div class="current-map">
+
+            <div class="current-placeholder">
+
+                <div class="icon">
+                    🌊
+                </div>
+
+                <h3>
+                    Ocean Current Layer
+                </h3>
+
+                <p>
+                    This section is prepared for integration with
+                    ocean current data. The future layer can display
+                    current velocity, direction, and temporal
+                    information on an interactive map.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="current-info">
+
+
+            <div class="current-card">
+
+                <small>
+                    DATA STATUS
+                </small>
+
+                <strong>
+                    Integration Ready
+                </strong>
+
+            </div>
+
+
+            <div class="current-card">
+
+                <small>
+                    CURRENT SPEED
+                </small>
+
+                <strong>
+                    — m/s
+                </strong>
+
+            </div>
+
+
+            <div class="current-card">
+
+                <small>
+                    CURRENT DIRECTION
+                </small>
+
+                <strong>
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="current-card">
+
+                <small>
+                    TIME
+                </small>
+
+                <strong>
+                    —
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<main class="container">
+
+
+<!-- =========================
      METHODOLOGY
-================================= -->
+========================= -->
 
-<section class="panel">
+<section id="methodology" class="section">
 
-<h3>
-    Data & Methodology
-</h3>
+<div class="section-title">
 
+    <h2>Data & Methodology</h2>
 
-<p>
+    <p>
+        General workflow used to transform spatial datasets
+        into an interactive WebGIS visualization.
+    </p>
 
-<strong>Spatial Data:</strong>
-Coral reef and seagrass distribution
-maps.
-
-</p>
+</div>
 
 
-<p>
-
-<strong>Temporal Analysis:</strong>
-Comparison of ecosystem distribution
-across 2021, 2024, 2027 and 2030.
-
-</p>
+<div class="method-grid">
 
 
-<p>
+<div class="method-card">
 
-<strong>Visualization:</strong>
-Web-based spatial-temporal visualization
-using HTML, CSS and JavaScript.
+    <div class="method-number">
+        01
+    </div>
 
-</p>
+    <h3>
+        Data Acquisition
+    </h3>
+
+    <p>
+        Collection and compilation of spatial and
+        environmental datasets from available sources.
+    </p>
+
+</div>
 
 
-<p>
+<div class="method-card">
 
-<strong>Oceanographic Data:</strong>
-Ocean current integration is planned
-for future development using
-oceanographic data services.
+    <div class="method-number">
+        02
+    </div>
 
-</p>
+    <h3>
+        GIS Processing
+    </h3>
+
+    <ul>
+
+        <li>
+            Spatial data processing
+        </li>
+
+        <li>
+            Data visualization
+        </li>
+
+        <li>
+            Spatial analysis
+        </li>
+
+    </ul>
+
+</div>
+
+
+<div class="method-card">
+
+    <div class="method-number">
+        03
+    </div>
+
+    <h3>
+        Remote Sensing
+    </h3>
+
+    <ul>
+
+        <li>
+            Satellite-based mapping
+        </li>
+
+        <li>
+            Ecosystem classification
+        </li>
+
+        <li>
+            Temporal comparison
+        </li>
+
+    </ul>
+
+</div>
+
+
+<div class="method-card">
+
+    <div class="method-number">
+        04
+    </div>
+
+    <h3>
+        WebGIS
+    </h3>
+
+    <ul>
+
+        <li>
+            Web map visualization
+        </li>
+
+        <li>
+            Temporal layer switching
+        </li>
+
+        <li>
+            Interactive dashboard
+        </li>
+
+    </ul>
+
+</div>
+
+</div>
 
 </section>
 
 
+<!-- =========================
+     METADATA
+========================= -->
 
-<!-- =================================
-     FOOTER
-================================= -->
+<section class="section">
 
-<div class="footer">
+<div class="section-title">
 
-    WebGIS Marine Ecosystem |
-    Spatial Analysis & Visualization
+    <h2>Spatial Data Metadata</h2>
+
+    <p>
+        Documentation framework for maintaining transparent,
+        standardized, and reproducible spatial information.
+    </p>
 
 </div>
+
+
+<table class="metadata-table">
+
+<thead>
+
+<tr>
+
+    <th>
+        Dataset
+    </th>
+
+    <th>
+        Temporal Coverage
+    </th>
+
+    <th>
+        Format
+    </th>
+
+    <th>
+        Purpose
+    </th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+<tr>
+
+    <td>
+        Marine Ecosystem Map
+    </td>
+
+    <td>
+        2021
+    </td>
+
+    <td>
+        PNG
+    </td>
+
+    <td>
+        Spatial visualization
+    </td>
+
+</tr>
+
+
+<tr>
+
+    <td>
+        Marine Ecosystem Map
+    </td>
+
+    <td>
+        2024
+    </td>
+
+    <td>
+        PNG
+    </td>
+
+    <td>
+        Spatial visualization
+    </td>
+
+</tr>
+
+
+<tr>
+
+    <td>
+        Marine Ecosystem Map
+    </td>
+
+    <td>
+        2027
+    </td>
+
+    <td>
+        PNG
+    </td>
+
+    <td>
+        Spatial visualization
+    </td>
+
+</tr>
+
+
+<tr>
+
+    <td>
+        Marine Ecosystem Map
+    </td>
+
+    <td>
+        2030
+    </td>
+
+    <td>
+        PNG
+    </td>
+
+    <td>
+        Spatial visualization
+    </td>
+
+</tr>
+
+
+<tr>
+
+    <td>
+        Ocean Current
+    </td>
+
+    <td>
+        Future integration
+    </td>
+
+    <td>
+        TBD
+    </td>
+
+    <td>
+        Oceanographic condition
+    </td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</section>
+
+
+<!-- =========================
+     ABOUT
+========================= -->
+
+<section class="section">
+
+<div class="section-title">
+
+    <h2>About This Project</h2>
+
+</div>
+
+
+<div class="about-box">
+
+    <p>
+        This WebGIS project was developed as a spatial visualization
+        platform for examining the distribution and temporal dynamics
+        of marine ecosystems, particularly coral reefs and seagrass.
+    </p>
+
+    <p>
+        The platform combines GIS, remote sensing, spatial analysis,
+        and web-based visualization to make marine spatial information
+        easier to explore and communicate.
+    </p>
+
+    <p>
+        Future development includes integration of ocean current
+        information, interactive spatial layers, metadata management,
+        and additional environmental datasets to support more
+        comprehensive marine spatial analysis.
+    </p>
+
+</div>
+
+</section>
 
 
 </main>
 
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+<div class="footer-content">
+
+    <p>
+        Marine Spatial Data Portal
+    </p>
+
+    <p>
+        Coral Reef • Seagrass • Ocean Current
+    </p>
+
+    <p>
+        Developed for spatial data visualization and marine
+        environmental analysis.
+    </p>
+
 </div>
 
+</footer>
 
 
-<!-- =================================
+<!-- =========================
      JAVASCRIPT
-================================= -->
+========================= -->
 
 <script>
 
-
 function changeMap(year, button) {
 
-
     /*
-       Hide all maps
+    ==============================
+    1. Hide all maps
+    ==============================
     */
 
-    const maps =
-        document.querySelectorAll(".year-map");
-
+    const maps = document.querySelectorAll(".year-map");
 
     maps.forEach(function(map) {
 
-        map.classList.remove(
-            "active-map"
-        );
+        map.classList.remove("active-map");
 
     });
 
 
-
     /*
-       Show selected map
+    ==============================
+    2. Show selected map
+    ==============================
     */
 
     const selectedMap =
-        document.getElementById(
-            "map-" + year
-        );
+        document.getElementById("map-" + year);
 
+    if (selectedMap) {
 
-    if(selectedMap) {
-
-        selectedMap.classList.add(
-            "active-map"
-        );
+        selectedMap.classList.add("active-map");
 
     }
 
 
-
     /*
-       Update titles
+    ==============================
+    3. Update map title
+    ==============================
     */
 
-    document.getElementById(
-        "map-title"
-    ).innerText =
+    document.getElementById("map-title").innerText =
         "Spatial Distribution — " + year;
 
 
-    document.getElementById(
-        "year-title"
-    ).innerText =
+    /*
+    ==============================
+    4. Update selected year
+    ==============================
+    */
+
+    document.getElementById("year-title").innerText =
         year;
 
-
-    document.getElementById(
-        "dashboard-year"
-    ).innerText =
+    document.getElementById("dashboard-year").innerText =
         year;
-
 
 
     /*
-       Update buttons
+    ==============================
+    5. Update active button
+    ==============================
     */
 
     const buttons =
-        document.querySelectorAll(
-            ".year-button"
-        );
-
+        document.querySelectorAll(".year-button");
 
     buttons.forEach(function(btn) {
 
-        btn.classList.remove(
-            "active"
-        );
+        btn.classList.remove("active");
 
     });
 
-
-    button.classList.add(
-        "active"
-    );
-
+    button.classList.add("active");
 
 
     /*
-       Update coral reef area
-       based on selected year
+    ==============================
+    6. Update coral reef area
+    ==============================
     */
 
     const coralArea = {
@@ -1090,17 +1729,12 @@ function changeMap(year, button) {
     };
 
 
-    document.getElementById(
-        "coral-area"
-    ).innerText =
+    document.getElementById("coral-area").innerText =
         coralArea[year];
 
 }
 
-
 </script>
 
-
 </body>
-
 </html>
