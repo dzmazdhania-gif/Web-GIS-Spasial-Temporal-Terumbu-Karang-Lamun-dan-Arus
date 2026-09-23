@@ -4,13 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>WebGIS Terumbu Karang, Lamun, dan Arus</title>
-
-    <!-- Leaflet CSS -->
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
+    <title>WebGIS Terumbu Karang dan Lamun</title>
 
     <style>
         * {
@@ -20,353 +14,306 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
+            background: #f4f7f9;
+            color: #222;
         }
 
-        #map {
-            width: 100%;
-            height: 100vh;
+        /* HEADER */
+        .header {
+            background: #0b3954;
+            color: white;
+            padding: 18px 30px;
         }
 
-        .title-box {
-            position: absolute;
-            top: 15px;
-            left: 50px;
-            z-index: 1000;
-            background: white;
-            padding: 12px 18px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
-        .title-box h2 {
+        .header h1 {
             margin: 0;
+            font-size: 24px;
+        }
+
+        .header p {
+            margin: 6px 0 0;
+            font-size: 14px;
+        }
+
+        /* LAYOUT */
+        .container {
+            display: flex;
+            height: calc(100vh - 85px);
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 300px;
+            background: white;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
             font-size: 20px;
         }
 
-        .title-box p {
-            margin: 5px 0 0;
-            font-size: 13px;
+        .sidebar h3 {
+            margin-top: 25px;
+            font-size: 15px;
         }
 
-        .legend {
+        .year-button {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0;
+            border: 1px solid #ccc;
             background: white;
-            padding: 10px;
-            line-height: 20px;
-            border-radius: 5px;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
         }
 
-        .legend i {
-            width: 18px;
-            height: 18px;
-            float: left;
-            margin-right: 8px;
-            opacity: 0.8;
+        .year-button:hover {
+            background: #e9f3f7;
         }
+
+        .year-button.active {
+            background: #0b3954;
+            color: white;
+            border-color: #0b3954;
+        }
+
+        .info-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f5f7;
+            border-radius: 8px;
+        }
+
+        .info-box h3 {
+            margin-top: 0;
+        }
+
+        /* MAP AREA */
+        .map-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .map-title {
+            margin-bottom: 12px;
+        }
+
+        .map-title h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .map-title p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .map-container {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .map-container img {
+            max-width: 100%;
+            max-height: 75vh;
+            object-fit: contain;
+            border-radius: 5px;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #777;
+        }
+
+        @media (max-width: 800px) {
+
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .map-area {
+                min-height: 600px;
+            }
+        }
+
     </style>
 </head>
 
 <body>
 
-    <!-- Map -->
-    <div id="map"></div>
+    <!-- HEADER -->
+    <div class="header">
 
-    <!-- Title -->
-    <div class="title-box">
-        <h2>WebGIS Terumbu Karang, Lamun, dan Arus</h2>
-        <p>Spatial-Temporal Marine Ecosystem Visualization</p>
+        <h1>
+            WebGIS Terumbu Karang, Lamun, dan Arus
+        </h1>
+
+        <p>
+            Spatial-Temporal Visualization of Marine Ecosystems
+        </p>
+
     </div>
 
-    <!-- Leaflet JS -->
-    <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-    </script>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+
+            <h2>Temporal Data</h2>
+
+            <p>
+                Pilih tahun untuk melihat hasil pemetaan.
+            </p>
+
+
+            <!-- YEAR BUTTONS -->
+
+            <button
+                class="year-button active"
+                onclick="changeMap(2021, this)">
+                2021
+            </button>
+
+            <button
+                class="year-button"
+                onclick="changeMap(2024, this)">
+                2024
+            </button>
+
+            <button
+                class="year-button"
+                onclick="changeMap(2027, this)">
+                2027
+            </button>
+
+            <button
+                class="year-button"
+                onclick="changeMap(2030, this)">
+                2030
+            </button>
+
+
+            <!-- INFORMATION -->
+
+            <div class="info-box">
+
+                <h3 id="year-title">
+                    Tahun 2021
+                </h3>
+
+                <p>
+                    Peta menunjukkan distribusi spasial
+                    terumbu karang dan lamun berdasarkan
+                    data pada tahun yang dipilih.
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- MAP -->
+
+        <div class="map-area">
+
+            <div class="map-title">
+
+                <h2 id="map-title">
+                    Peta Tahun 2021
+                </h2>
+
+                <p>
+                    Terumbu Karang dan Lamun
+                </p>
+
+            </div>
+
+
+            <div class="map-container">
+
+                <img
+                    id="map-image"
+                    src="2021.png"
+                    alt="Peta tahun 2021">
+
+            </div>
+
+
+            <div class="footer">
+
+                Source: Spatial analysis and mapping project
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
 
     <script>
 
-        // ==========================================
-        // 1. INITIALIZE MAP
-        // ==========================================
+        function changeMap(year, button) {
 
-        const map = L.map('map').setView([-5.5, 119.5], 6);
+            // Change image
 
-
-        // ==========================================
-        // 2. BASEMAP
-        // ==========================================
-
-        const osm = L.tileLayer(
-            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            {
-                attribution: '&copy; OpenStreetMap contributors'
-            }
-        ).addTo(map);
+            document.getElementById("map-image").src =
+                year + ".png";
 
 
-        const satellite = L.tileLayer(
-            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-            {
-                attribution: 'Tiles &copy; Esri'
-            }
-        );
+            // Change title
+
+            document.getElementById("map-title").innerText =
+                "Peta Tahun " + year;
 
 
-        // ==========================================
-        // 3. LAYER GROUP
-        // ==========================================
-
-        const coralLayer = L.layerGroup();
-
-        const seagrassLayer = L.layerGroup();
-
-        const currentLayer = L.layerGroup();
+            document.getElementById("year-title").innerText =
+                "Tahun " + year;
 
 
-        // ==========================================
-        // 4. EXAMPLE CORAL REEF DATA
-        // ==========================================
+            // Remove active state
 
-        const coralData = {
-            "type": "FeatureCollection",
-            "features": [
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "Name": "Coral Reef Example",
-                        "Year": 2024,
-                        "Area_km2": 10.5,
-                        "Type": "Coral Reef"
-                    },
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [119.5, -5.5]
-                    }
-                }
-            ]
-        };
+            const buttons =
+                document.querySelectorAll(".year-button");
 
+            buttons.forEach(function(btn) {
 
-        // ==========================================
-        // 5. DISPLAY CORAL REEF
-        // ==========================================
-
-        L.geoJSON(coralData, {
-
-            pointToLayer: function(feature, latlng) {
-
-                return L.circleMarker(latlng, {
-                    radius: 8,
-                    fillOpacity: 0.8,
-                    weight: 1
-                });
-
-            },
-
-            onEachFeature: function(feature, layer) {
-
-                const p = feature.properties;
-
-                layer.bindPopup(`
-                    <b>${p.Name}</b><br>
-                    Type: ${p.Type}<br>
-                    Year: ${p.Year}<br>
-                    Area: ${p.Area_km2} km²
-                `);
-
-            }
-
-        }).addTo(coralLayer);
-
-
-        coralLayer.addTo(map);
-
-
-        // ==========================================
-        // 6. LOAD SEAGRASS GEOJSON
-        // ==========================================
-
-        fetch('data/seagrass.geojson')
-
-            .then(response => {
-
-                if (!response.ok) {
-                    throw new Error('Seagrass GeoJSON not found');
-                }
-
-                return response.json();
-
-            })
-
-            .then(data => {
-
-                L.geoJSON(data, {
-
-                    style: function(feature) {
-
-                        return {
-                            weight: 1,
-                            fillOpacity: 0.6
-                        };
-
-                    },
-
-                    onEachFeature: function(feature, layer) {
-
-                        let popup = "<b>Seagrass</b><br>";
-
-                        for (let key in feature.properties) {
-
-                            popup +=
-                                `<b>${key}</b>: ${feature.properties[key]}<br>`;
-
-                        }
-
-                        layer.bindPopup(popup);
-
-                    }
-
-                }).addTo(seagrassLayer);
-
-            })
-
-            .catch(error => {
-
-                console.log(
-                    "Seagrass data belum tersedia:",
-                    error
-                );
+                btn.classList.remove("active");
 
             });
 
 
-        // ==========================================
-        // 7. LOAD OCEAN CURRENT GEOJSON
-        // ==========================================
+            // Activate selected button
 
-        fetch('data/ocean_current.geojson')
+            button.classList.add("active");
 
-            .then(response => {
-
-                if (!response.ok) {
-                    throw new Error('Ocean current GeoJSON not found');
-                }
-
-                return response.json();
-
-            })
-
-            .then(data => {
-
-                L.geoJSON(data, {
-
-                    style: function(feature) {
-
-                        return {
-                            weight: 3
-                        };
-
-                    },
-
-                    onEachFeature: function(feature, layer) {
-
-                        let popup = "<b>Ocean Current</b><br>";
-
-                        for (let key in feature.properties) {
-
-                            popup +=
-                                `<b>${key}</b>: ${feature.properties[key]}<br>`;
-
-                        }
-
-                        layer.bindPopup(popup);
-
-                    }
-
-                }).addTo(currentLayer);
-
-            })
-
-            .catch(error => {
-
-                console.log(
-                    "Ocean current data belum tersedia:",
-                    error
-                );
-
-            });
-
-
-        // ==========================================
-        // 8. LAYER CONTROL
-        // ==========================================
-
-        const baseMaps = {
-
-            "OpenStreetMap": osm,
-
-            "Satellite": satellite
-
-        };
-
-
-        const overlayMaps = {
-
-            "🪸 Terumbu Karang": coralLayer,
-
-            "🌱 Lamun": seagrassLayer,
-
-            "🌊 Arus": currentLayer
-
-        };
-
-
-        L.control.layers(
-            baseMaps,
-            overlayMaps,
-            {
-                collapsed: false
-            }
-        ).addTo(map);
-
-
-        // ==========================================
-        // 9. SCALE
-        // ==========================================
-
-        L.control.scale({
-            imperial: false
-        }).addTo(map);
-
-
-        // ==========================================
-        // 10. LEGEND
-        // ==========================================
-
-        const legend = L.control({
-            position: 'bottomright'
-        });
-
-
-        legend.onAdd = function(map) {
-
-            const div = L.DomUtil.create(
-                'div',
-                'legend'
-            );
-
-            div.innerHTML = `
-                <b>Legend</b><br>
-                <i></i> Terumbu Karang<br>
-                <i></i> Lamun<br>
-                <i></i> Arus
-            `;
-
-            return div;
-
-        };
-
-
-        legend.addTo(map);
+        }
 
     </script>
 
