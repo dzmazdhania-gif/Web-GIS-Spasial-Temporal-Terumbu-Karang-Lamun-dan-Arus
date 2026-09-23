@@ -1,43 +1,27 @@
-<!-- =========================
-     LEAFLET + GEOTIFF LIBRARIES
-========================= -->
-
+<!-- LEAFLET + GEOTIFF LIBRARIES -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script src="https://unpkg.com/georaster"></script>
-
 <script src="https://unpkg.com/georaster-layer-for-leaflet/dist/georaster-layer-for-leaflet.min.js"></script>
-
 
 <script>
 
     /* =========================================================
-       GEOTIFF DATA
+       GEOTIFF FILES
     ========================================================= */
 
     const rasterData = {
-
         2021: "./ClippedRajuni2021.tif",
-
         2024: "./2024new.tif",
-
         2027: "./2027new.tif",
-
         2030: "./2030new.tif"
-
     };
 
 
     const sourceData = {
-
         2021: "Allen Coral Atlas",
-
         2024: "Allen Coral Atlas",
-
         2027: "ANN Prediction",
-
         2030: "ANN Prediction"
-
     };
 
 
@@ -46,18 +30,15 @@
     ========================================================= */
 
     let leafletMap = null;
-
     let currentOverlay = null;
-
     let currentYear = 2021;
-
     let currentOpacity = 0.75;
 
     let osmLayer = null;
-
     let satelliteLayer = null;
 
     let mapInitialized = false;
+    let loadingYear = null;
 
 
     /* =========================================================
@@ -67,9 +48,17 @@
     function initMap() {
 
         if (mapInitialized) {
-
             return;
+        }
 
+        const mapContainer =
+            document.getElementById("interactive-map");
+
+        if (!mapContainer) {
+            console.error(
+                "Element #interactive-map tidak ditemukan."
+            );
+            return;
         }
 
 
@@ -77,27 +66,19 @@
 
 
         /* -----------------------------------------------------
-           CREATE MAP
+           CREATE LEAFLET MAP
         ----------------------------------------------------- */
 
         leafletMap = L.map(
             "interactive-map",
             {
-
                 zoomControl: true,
-
                 preferCanvas: true,
-
                 zoomAnimation: false,
-
                 fadeAnimation: false,
-
                 markerZoomAnimation: false,
-
                 inertia: true,
-
                 worldCopyJump: false
-
             }
         );
 
@@ -107,24 +88,15 @@
         ----------------------------------------------------- */
 
         osmLayer = L.tileLayer(
-
             "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-
             {
-
-                maxZoom: 18,
-
+                maxZoom: 19,
                 updateWhenIdle: true,
-
                 updateWhenZooming: false,
-
                 keepBuffer: 1,
-
                 attribution:
                     "&copy; OpenStreetMap contributors"
-
             }
-
         );
 
 
@@ -133,29 +105,20 @@
         ----------------------------------------------------- */
 
         satelliteLayer = L.tileLayer(
-
             "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-
             {
-
-                maxZoom: 18,
-
+                maxZoom: 19,
                 updateWhenIdle: true,
-
                 updateWhenZooming: false,
-
                 keepBuffer: 1,
-
                 attribution:
                     "Tiles &copy; Esri"
-
             }
-
         );
 
 
         /* -----------------------------------------------------
-           DEFAULT BASEMAP
+           DEFAULT BASEMAP = OSM
         ----------------------------------------------------- */
 
         osmLayer.addTo(
@@ -164,22 +127,33 @@
 
 
         /* -----------------------------------------------------
-           LOAD 2021 AUTOMATICALLY
+           INITIAL MAP VIEW
+           Temporary view while GeoTIFF loads
         ----------------------------------------------------- */
 
-        loadYear(
-            currentYear
+        leafletMap.setView(
+            [-5.50, 120.50],
+            10
         );
 
 
         /* -----------------------------------------------------
-           FIX MAP SIZE
+           LOAD 2021 AUTOMATICALLY
+        ----------------------------------------------------- */
+
+        loadYear(2021);
+
+
+        /* -----------------------------------------------------
+           FIX LEAFLET SIZE
         ----------------------------------------------------- */
 
         setTimeout(
             function() {
 
-                leafletMap.invalidateSize();
+                if (leafletMap) {
+                    leafletMap.invalidateSize();
+                }
 
             },
             300
@@ -194,24 +168,22 @@
 
     async function loadYear(year) {
 
-        currentYear = year;
-
-
-        /* -----------------------------------------------------
-           REMOVE PREVIOUS RASTER
-        ----------------------------------------------------- */
-
-        if (
-            currentOverlay
-        ) {
-
-            leafletMap.removeLayer(
-                currentOverlay
-            );
-
-            currentOverlay = null;
-
+        if (!leafletMap) {
+            return;
         }
+
+
+        /*
+           Prevent duplicate loading
+        */
+
+        if (loadingYear === year) {
+            return;
+        }
+
+
+        loadingYear = year;
+        currentYear = year;
 
 
         /* -----------------------------------------------------
@@ -219,17 +191,18 @@
         ----------------------------------------------------- */
 
         const loading =
-            document.getElementById(
-                "map-loading"
-            );
+            document.getElementById("map-loading");
 
-
-        loading.classList.remove(
-            "hidden"
-        );
+        if (loading) {
+            loading.classList.remove("hidden");
+        }
 
 
         try {
+
+            console.log(
+                "======================================"
+            );
 
             console.log(
                 "Loading GeoTIFF:",
@@ -238,39 +211,66 @@
 
 
             /* -------------------------------------------------
-               FETCH TIFF
+               REMOVE PREVIOUS RASTER
+            ------------------------------------------------- */
+
+            if (currentOverlay) {
+
+                leafletMap.removeLayer(
+                    currentOverlay
+                );
+
+                currentOverlay = null;
+
+            }
+
+
+            /* -------------------------------------------------
+               FETCH GEOTIFF
             ------------------------------------------------- */
 
             const response =
                 await fetch(
-                    rasterData[year]
+                    rasterData[year],
+                    {
+                        cache: "no-cache"
+                    }
                 );
 
 
-            if (
-                !response.ok
-            ) {
+            if (!response.ok) {
 
                 throw new Error(
                     "HTTP " +
                     response.status +
                     " - " +
-                    rasterData[year]
+                    response.statusText
                 );
 
             }
 
 
             /* -------------------------------------------------
-               ARRAY BUFFER
+               READ ARRAY BUFFER
             ------------------------------------------------- */
 
             const arrayBuffer =
                 await response.arrayBuffer();
 
 
+            console.log(
+                "GeoTIFF size:",
+                (
+                    arrayBuffer.byteLength /
+                    1024 /
+                    1024
+                ).toFixed(2),
+                "MB"
+            );
+
+
             /* -------------------------------------------------
-               PARSE GEOTIFF
+               PARSE GEORASTER
             ------------------------------------------------- */
 
             const georaster =
@@ -280,16 +280,34 @@
 
 
             console.log(
-                "GeoRaster loaded:",
+                "GeoRaster:",
                 georaster
             );
 
-
             console.log(
-                "CRS:",
+                "Projection:",
                 georaster.projection
             );
 
+            console.log(
+                "Width:",
+                georaster.width
+            );
+
+            console.log(
+                "Height:",
+                georaster.height
+            );
+
+            console.log(
+                "Bands:",
+                georaster.numberOfRasters
+            );
+
+            console.log(
+                "NoData:",
+                georaster.noDataValue
+            );
 
             console.log(
                 "Bounds:",
@@ -304,66 +322,57 @@
                CREATE GEORASTER LAYER
             ------------------------------------------------- */
 
-            currentOverlay =
-                new GeoRasterLayer({
+            const newOverlay =
+                new GeoRasterLayer(
+                    {
+                        georaster: georaster,
 
-                    georaster:
-                        georaster,
+                        opacity:
+                            currentOpacity,
 
-                    opacity:
-                        currentOpacity,
+                        resolution:
+                            256,
 
-                    resolution:
-                        256,
+                        pixelValuesToColorFn:
+                            function(values) {
 
-                    pixelValuesToColorFn:
-                        pixelValuesToColor
+                                return pixelValuesToColor(
+                                    values,
+                                    georaster
+                                );
 
-                });
+                            }
+                    }
+                );
 
 
             /* -------------------------------------------------
-               ADD TO MAP
+               ADD RASTER TO MAP
             ------------------------------------------------- */
 
-            currentOverlay.addTo(
+            newOverlay.addTo(
                 leafletMap
             );
 
 
-            /* -------------------------------------------------
-               WAIT FOR LAYER
-            ------------------------------------------------- */
-
-            currentOverlay.once(
-                "load",
-                function() {
-
-                    leafletMap.fitBounds(
-                        currentOverlay.getBounds(),
-                        {
-                            padding:
-                                [20, 20]
-                        }
-                    );
-
-                }
-            );
+            currentOverlay =
+                newOverlay;
 
 
             /* -------------------------------------------------
-               FALLBACK FIT BOUNDS
+               FIT MAP TO RASTER
             ------------------------------------------------- */
 
             setTimeout(
                 function() {
 
                     if (
-                        currentOverlay
+                        currentOverlay ===
+                        newOverlay
                     ) {
 
                         const bounds =
-                            currentOverlay.getBounds();
+                            newOverlay.getBounds();
 
 
                         if (
@@ -375,7 +384,9 @@
                                 bounds,
                                 {
                                     padding:
-                                        [20, 20]
+                                        [20, 20],
+                                    maxZoom:
+                                        15
                                 }
                             );
 
@@ -384,33 +395,47 @@
                     }
 
                 },
-                500
+                300
             );
 
 
             /* -------------------------------------------------
-               UPDATE MAP INFORMATION
+               UPDATE INFORMATION
             ------------------------------------------------- */
 
-            document
-                .getElementById(
+            const yearElement =
+                document.getElementById(
                     "map-year"
-                )
-                .textContent =
+                );
+
+            if (yearElement) {
+
+                yearElement.textContent =
                     year;
 
+            }
 
-            document
-                .getElementById(
+
+            const sourceElement =
+                document.getElementById(
                     "map-source"
-                )
-                .textContent =
+                );
+
+            if (sourceElement) {
+
+                sourceElement.textContent =
                     sourceData[year];
+
+            }
 
 
             console.log(
                 "GeoTIFF successfully displayed:",
                 year
+            );
+
+            console.log(
+                "======================================"
             );
 
         }
@@ -427,8 +452,8 @@
             alert(
                 "GeoTIFF " +
                 year +
-                " gagal dimuat. " +
-                "Buka Console (F12) untuk melihat detail error."
+                " gagal dimuat.\n\n" +
+                "Cek Console (F12) untuk melihat detail error."
             );
 
         }
@@ -436,9 +461,16 @@
 
         finally {
 
-            loading.classList.add(
-                "hidden"
-            );
+            loadingYear = null;
+
+
+            if (loading) {
+
+                loading.classList.add(
+                    "hidden"
+                );
+
+            }
 
         }
 
@@ -450,7 +482,8 @@
     ========================================================= */
 
     function pixelValuesToColor(
-        values
+        values,
+        georaster
     ) {
 
         /*
@@ -467,10 +500,16 @@
         }
 
 
+        /* -----------------------------------------------------
+           CHECK NODATA
+        ----------------------------------------------------- */
+
+        const noData =
+            georaster.noDataValue;
+
+
         /*
-           -----------------------------------------
            RGB / RGBA RASTER
-           -----------------------------------------
         */
 
         if (
@@ -488,13 +527,32 @@
 
 
             /*
-               Transparent empty pixel
+               Invalid pixel
             */
 
             if (
                 !Number.isFinite(r) ||
                 !Number.isFinite(g) ||
                 !Number.isFinite(b)
+            ) {
+
+                return null;
+
+            }
+
+
+            /*
+               NoData pixel
+            */
+
+            if (
+                noData !== null &&
+                noData !== undefined &&
+                (
+                    r === noData ||
+                    g === noData ||
+                    b === noData
+                )
             ) {
 
                 return null;
@@ -530,18 +588,16 @@
         }
 
 
-        /*
-           -----------------------------------------
+        /* -----------------------------------------------------
            SINGLE BAND RASTER
-           -----------------------------------------
-        */
+        ----------------------------------------------------- */
 
         const value =
             Number(values[0]);
 
 
         /*
-           Empty / NoData
+           Invalid
         */
 
         if (
@@ -554,7 +610,22 @@
 
 
         /*
-           Background 0
+           NoData
+        */
+
+        if (
+            noData !== null &&
+            noData !== undefined &&
+            value === noData
+        ) {
+
+            return null;
+
+        }
+
+
+        /*
+           Background
         */
 
         if (
@@ -567,10 +638,10 @@
 
 
         /*
-           Coral class
+           Coral reef
         */
 
-        return "#0f766e";
+        return "rgba(15,118,110,1)";
 
     }
 
@@ -580,11 +651,9 @@
     ========================================================= */
 
     document
-        .querySelectorAll(
-            ".year-btn"
-        )
+        .querySelectorAll(".year-btn")
         .forEach(
-            button => {
+            function(button) {
 
                 button.addEventListener(
                     "click",
@@ -597,7 +666,7 @@
 
 
                         /*
-                           Active button
+                           Update active button
                         */
 
                         document
@@ -605,7 +674,7 @@
                                 ".year-btn"
                             )
                             .forEach(
-                                btn => {
+                                function(btn) {
 
                                     btn.classList.remove(
                                         "active"
@@ -621,7 +690,7 @@
 
 
                         /*
-                           Load raster
+                           Load selected year
                         */
 
                         if (
@@ -642,14 +711,18 @@
 
 
     /* =========================================================
-       OPACITY
+       OPACITY SLIDER
     ========================================================= */
 
-    document
-        .getElementById(
+    const opacitySlider =
+        document.getElementById(
             "opacity-slider"
-        )
-        .addEventListener(
+        );
+
+
+    if (opacitySlider) {
+
+        opacitySlider.addEventListener(
             "input",
             function() {
 
@@ -672,9 +745,11 @@
             }
         );
 
+    }
+
 
     /* =========================================================
-       BASEMAP
+       BASEMAP SWITCH
     ========================================================= */
 
     document
@@ -682,14 +757,15 @@
             'input[name="basemap"]'
         )
         .forEach(
-            radio => {
+            function(radio) {
 
                 radio.addEventListener(
                     "change",
                     function() {
 
                         if (
-                            !mapInitialized
+                            !mapInitialized ||
+                            !leafletMap
                         ) {
 
                             return;
@@ -697,9 +773,9 @@
                         }
 
 
-                        /* ---------------------------------
+                        /*
                            OSM
-                        --------------------------------- */
+                        */
 
                         if (
                             this.value === "osm"
@@ -733,12 +809,13 @@
                         }
 
 
-                        /* ---------------------------------
-                           SATELLITE
-                        --------------------------------- */
+                        /*
+                           Satellite
+                        */
 
-                        if (
-                            this.value === "satellite"
+                        else if (
+                            this.value ===
+                            "satellite"
                         ) {
 
                             if (
@@ -776,19 +853,24 @@
 
 
     /* =========================================================
-       CORAL TOGGLE
+       CORAL REEF TOGGLE
     ========================================================= */
 
-    document
-        .getElementById(
+    const coralToggle =
+        document.getElementById(
             "coral-toggle"
-        )
-        .addEventListener(
+        );
+
+
+    if (coralToggle) {
+
+        coralToggle.addEventListener(
             "change",
             function() {
 
                 if (
-                    !currentOverlay
+                    !currentOverlay ||
+                    !leafletMap
                 ) {
 
                     return;
@@ -817,16 +899,22 @@
             }
         );
 
+    }
+
 
     /* =========================================================
-       SEAGRASS PLACEHOLDER
+       SEAGRASS
     ========================================================= */
 
-    document
-        .getElementById(
+    const seagrassToggle =
+        document.getElementById(
             "seagrass-toggle"
-        )
-        .addEventListener(
+        );
+
+
+    if (seagrassToggle) {
+
+        seagrassToggle.addEventListener(
             "change",
             function() {
 
@@ -847,16 +935,22 @@
             }
         );
 
+    }
+
 
     /* =========================================================
-       CURRENT PLACEHOLDER
+       OCEAN CURRENT
     ========================================================= */
 
-    document
-        .getElementById(
+    const currentToggle =
+        document.getElementById(
             "current-toggle"
-        )
-        .addEventListener(
+        );
+
+
+    if (currentToggle) {
+
+        currentToggle.addEventListener(
             "change",
             function() {
 
@@ -877,9 +971,11 @@
             }
         );
 
+    }
+
 
     /* =========================================================
-       LAZY LOAD
+       LAZY LOAD MAP
     ========================================================= */
 
     const mapSection =
@@ -888,38 +984,36 @@
         );
 
 
-    const mapObserver =
-        new IntersectionObserver(
+    if (mapSection) {
 
-            function(entries) {
+        const mapObserver =
+            new IntersectionObserver(
+                function(entries) {
 
-                if (
-                    entries[0].isIntersecting &&
-                    !mapInitialized
-                ) {
+                    if (
+                        entries[0].isIntersecting &&
+                        !mapInitialized
+                    ) {
 
-                    initMap();
+                        initMap();
 
+                        mapObserver.disconnect();
 
-                    mapObserver.disconnect();
+                    }
 
+                },
+                {
+                    rootMargin:
+                        "400px 0px"
                 }
+            );
 
-            },
 
-            {
-
-                rootMargin:
-                    "400px 0px"
-
-            }
-
+        mapObserver.observe(
+            mapSection
         );
 
-
-    mapObserver.observe(
-        mapSection
-    );
+    }
 
 
     /* =========================================================
@@ -930,12 +1024,10 @@
         "resize",
         function() {
 
-            if (
-                leafletMap
-            ) {
+            if (leafletMap) {
 
                 requestAnimationFrame(
-                    () => {
+                    function() {
 
                         leafletMap.invalidateSize();
 
@@ -948,4 +1040,3 @@
     );
 
 </script>
-```
