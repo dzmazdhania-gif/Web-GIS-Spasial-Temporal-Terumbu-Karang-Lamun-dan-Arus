@@ -1,995 +1,2210 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Marine Spatial Data Portal</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Leaflet -->
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
+<title>Marine Spatial Data Portal</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
 
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f4f7f9;
-            color: #1f2937;
-        }
+<style>
 
-        header {
-            background: #0f3d56;
-            color: white;
-            padding: 22px 30px;
-        }
+/* =========================================================
+   GLOBAL
+========================================================= */
 
-        header h1 {
-            margin: 0 0 6px 0;
-            font-size: 28px;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        header p {
-            margin: 0;
-            font-size: 14px;
-            opacity: 0.9;
-        }
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family:
+        Inter,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+    background: #eef3f5;
+    color: #172b34;
+}
 
-        main {
-            max-width: 1400px;
-            margin: auto;
-            padding: 24px;
-        }
+body {
+    overflow-x: hidden;
+}
 
-        .control-panel {
-            background: white;
-            border-radius: 12px;
-            padding: 18px;
-            margin-bottom: 18px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
 
-        .control-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 12px;
-        }
+/* =========================================================
+   HEADER
+========================================================= */
 
-        .year-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
+.header {
+    background:
+        linear-gradient(
+            135deg,
+            #073b4c 0%,
+            #075985 50%,
+            #0f766e 100%
+        );
 
-        .year-btn {
-            border: none;
-            padding: 10px 20px;
-            border-radius: 7px;
-            background: #e5e7eb;
-            color: #374151;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
+    color: white;
 
-        .year-btn:hover {
-            background: #d1d5db;
-        }
+    padding:
+        24px
+        clamp(20px, 5vw, 70px);
 
-        .year-btn.active {
-            background: #0f766e;
-            color: white;
-        }
+    position: relative;
 
-        .controls-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 25px;
-            align-items: center;
-            margin-top: 18px;
-        }
+    overflow: hidden;
+}
 
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+.header::after {
 
-        .control-group label {
-            font-size: 14px;
-            font-weight: bold;
-        }
+    content: "";
 
-        input[type="range"] {
-            width: 180px;
-        }
+    position: absolute;
 
-        select {
-            padding: 8px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            background: white;
-        }
+    width: 500px;
+    height: 500px;
 
-        .map-card {
-            position: relative;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
+    right: -180px;
+    top: -300px;
 
-        #interactive-map {
-            width: 100%;
-            height: 650px;
-            min-height: 500px;
-            position: relative;
-            z-index: 1;
-        }
+    border-radius: 50%;
 
-        #map-loading {
-            position: absolute;
-            z-index: 1000;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            font-size: 14px;
-            display: none;
-        }
+    background:
+        rgba(255,255,255,0.07);
+}
 
-        #map-error {
-            position: absolute;
-            z-index: 1000;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            max-width: 90%;
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 12px 18px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-            font-size: 14px;
-            display: none;
-        }
+.header-inner {
 
-        .legend {
-            position: absolute;
-            right: 15px;
-            bottom: 25px;
-            z-index: 1000;
-            background: rgba(255,255,255,0.95);
-            padding: 14px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            min-width: 180px;
-        }
+    max-width: 1450px;
 
-        .legend-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
+    margin: auto;
 
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin: 6px 0;
-            font-size: 13px;
-        }
+    position: relative;
 
-        .legend-color {
-            width: 18px;
-            height: 18px;
-            margin-right: 8px;
-            border: 1px solid #777;
-            border-radius: 3px;
-        }
+    z-index: 2;
+}
 
-        .info-panel {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 18px;
-        }
+.brand {
 
-        .info-box {
-            background: white;
-            padding: 18px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
+    display: flex;
 
-        .info-label {
-            font-size: 12px;
-            color: #6b7280;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+    align-items: center;
 
-        .info-value {
-            font-size: 17px;
-            font-weight: bold;
-            color: #0f3d56;
-        }
+    gap: 14px;
+}
 
-        footer {
-            text-align: center;
-            padding: 25px;
-            font-size: 13px;
-            color: #6b7280;
-        }
+.brand-icon {
 
-        @media (max-width: 800px) {
+    width: 46px;
+    height: 46px;
 
-            header {
-                padding: 18px;
-            }
+    display: flex;
 
-            header h1 {
-                font-size: 22px;
-            }
+    align-items: center;
+    justify-content: center;
 
-            main {
-                padding: 14px;
-            }
+    border-radius: 12px;
 
-            #interactive-map {
-                height: 550px;
-            }
+    background:
+        rgba(255,255,255,0.15);
 
-            .info-panel {
-                grid-template-columns: 1fr;
-            }
+    backdrop-filter:
+        blur(10px);
 
-            .controls-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
+    font-size: 22px;
+}
 
-            .legend {
-                bottom: 15px;
-                right: 10px;
-                font-size: 12px;
-            }
-        }
-    </style>
+.brand-title {
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+    letter-spacing:
+        -0.3px;
+}
+
+.brand-subtitle {
+
+    margin-top: 3px;
+
+    font-size: 12px;
+
+    opacity: 0.75;
+
+}
+
+.header-description {
+
+    margin-top: 22px;
+
+    max-width: 720px;
+
+}
+
+.header-description h1 {
+
+    margin: 0;
+
+    font-size:
+        clamp(28px, 4vw, 42px);
+
+    line-height: 1.15;
+
+    letter-spacing:
+        -1px;
+}
+
+.header-description p {
+
+    margin:
+        12px 0 0;
+
+    font-size: 15px;
+
+    line-height: 1.7;
+
+    color:
+        rgba(255,255,255,0.82);
+
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main {
+
+    width: 100%;
+
+    max-width: 1450px;
+
+    margin: auto;
+
+    padding:
+        28px
+        clamp(20px, 5vw, 70px)
+        50px;
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+.dashboard {
+
+    display: grid;
+
+    grid-template-columns:
+        300px
+        minmax(0, 1fr);
+
+    gap: 20px;
+
+    align-items: stretch;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+
+    background: white;
+
+    border:
+        1px solid #dce6ea;
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 8px 28px
+        rgba(15, 45, 55, 0.07);
+
+    height: fit-content;
+
+    position: sticky;
+
+    top: 20px;
+}
+
+.sidebar-title {
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    margin-bottom: 5px;
+}
+
+.sidebar-description {
+
+    font-size: 12px;
+
+    color: #71838b;
+
+    line-height: 1.5;
+
+    margin-bottom: 22px;
+}
+
+.control-section {
+
+    margin-bottom: 24px;
+
+}
+
+.control-section:last-child {
+
+    margin-bottom: 0;
+
+}
+
+.control-title {
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    color: #6b7f88;
+
+    text-transform: uppercase;
+
+    letter-spacing:
+        0.8px;
+
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   YEAR BUTTONS
+========================================================= */
+
+.year-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 8px;
+}
+
+.year-button {
+
+    border: 1px solid #d9e4e8;
+
+    background: #f8fafb;
+
+    color: #40545c;
+
+    padding:
+        11px 8px;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition:
+        all 0.2s ease;
+}
+
+.year-button:hover {
+
+    border-color:
+        #0f766e;
+
+    color:
+        #0f766e;
+
+    background:
+        #f0fdfa;
+}
+
+.year-button.active {
+
+    background:
+        linear-gradient(
+            135deg,
+            #0f766e,
+            #0d9488
+        );
+
+    color: white;
+
+    border-color:
+        #0f766e;
+
+    box-shadow:
+        0 5px 14px
+        rgba(15,118,110,0.22);
+}
+
+
+/* =========================================================
+   OPACITY
+========================================================= */
+
+.opacity-row {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.opacity-row input {
+
+    flex: 1;
+
+    accent-color:
+        #0f766e;
+}
+
+.opacity-number {
+
+    width: 42px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    color:
+        #0f766e;
+
+    text-align: right;
+}
+
+
+/* =========================================================
+   BASEMAP BUTTONS
+========================================================= */
+
+.basemap-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 8px;
+}
+
+.basemap-button {
+
+    border:
+        1px solid #d9e4e8;
+
+    background: #f8fafb;
+
+    border-radius: 9px;
+
+    padding: 9px;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+    color: #50636b;
+}
+
+.basemap-button.active {
+
+    background: #e6fffb;
+
+    border-color: #0f766e;
+
+    color: #0f766e;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   DATA STATUS
+========================================================= */
+
+.status-card {
+
+    margin-top: 20px;
+
+    background:
+        #f5faf9;
+
+    border:
+        1px solid #d4ebe7;
+
+    border-radius: 12px;
+
+    padding: 13px;
+}
+
+.status-line {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    font-size: 12px;
+
+    color: #45615e;
+}
+
+.status-dot {
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background:
+        #10b981;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(16,185,129,0.12);
+}
+
+
+/* =========================================================
+   MAP CARD
+========================================================= */
+
+.map-card {
+
+    min-width: 0;
+
+    background: white;
+
+    border:
+        1px solid #dce6ea;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 8px 28px
+        rgba(15, 45, 55, 0.07);
+
+    position: relative;
+}
+
+.map-topbar {
+
+    padding:
+        16px 20px;
+
+    border-bottom:
+        1px solid #e5ecef;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+.map-title {
+
+    font-size: 15px;
+
+    font-weight: 700;
+}
+
+.map-subtitle {
+
+    font-size: 11px;
+
+    color: #7b8d95;
+
+    margin-top: 3px;
+}
+
+.dataset-badge {
+
+    background:
+        #ecfdf5;
+
+    color:
+        #047857;
+
+    border:
+        1px solid #bbf7d0;
+
+    padding:
+        6px 10px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   MAP
+========================================================= */
+
+.map-wrapper {
+
+    position: relative;
+
+    width: 100%;
+}
+
+#interactive-map {
+
+    width: 100%;
+
+    height:
+        min(70vh, 680px);
+
+    min-height: 540px;
+
+    background:
+        #dbeafe;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.map-loading {
+
+    position: absolute;
+
+    z-index: 1200;
+
+    top: 18px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    background:
+        rgba(255,255,255,0.96);
+
+    border:
+        1px solid #dce6ea;
+
+    border-radius: 10px;
+
+    padding:
+        9px 14px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0,0,0,0.12);
+
+    font-size: 12px;
+
+    color: #455a64;
+}
+
+.map-loading.hidden {
+
+    display: none;
+}
+
+
+/* =========================================================
+   MAP LEGEND
+========================================================= */
+
+.legend {
+
+    position: absolute;
+
+    z-index: 1000;
+
+    right: 15px;
+
+    bottom: 20px;
+
+    width: 190px;
+
+    background:
+        rgba(255,255,255,0.94);
+
+    backdrop-filter:
+        blur(10px);
+
+    border:
+        1px solid rgba(255,255,255,0.8);
+
+    border-radius: 13px;
+
+    padding: 14px;
+
+    box-shadow:
+        0 8px 25px
+        rgba(0,0,0,0.16);
+
+    font-size: 11px;
+}
+
+.legend-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 10px;
+}
+
+.legend-title {
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+.legend-count {
+
+    font-size: 10px;
+
+    color: #7a8c93;
+}
+
+.legend-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 7px;
+
+    color: #455a64;
+}
+
+.legend-item:last-child {
+
+    margin-bottom: 0;
+}
+
+.legend-color {
+
+    width: 16px;
+    height: 16px;
+
+    border-radius: 4px;
+
+    flex-shrink: 0;
+
+    border:
+        1px solid
+        rgba(0,0,0,0.12);
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.map-error {
+
+    display: none;
+
+    padding:
+        12px 18px;
+
+    background:
+        #fff1f2;
+
+    color:
+        #9f1239;
+
+    border-top:
+        1px solid #fecdd3;
+
+    font-size: 12px;
+}
+
+.map-error.show {
+
+    display: block;
+}
+
+
+/* =========================================================
+   MAP INFO
+========================================================= */
+
+.info-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    border-top:
+        1px solid #e5ecef;
+}
+
+.info-card {
+
+    padding:
+        15px 18px;
+
+    border-right:
+        1px solid #e5ecef;
+}
+
+.info-card:last-child {
+
+    border-right: none;
+}
+
+.info-label {
+
+    font-size: 10px;
+
+    color: #81939a;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.5px;
+
+    margin-bottom: 5px;
+}
+
+.info-value {
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    color: #17343e;
+}
+
+
+/* =========================================================
+   CLASSIFICATION BAR
+========================================================= */
+
+.classification {
+
+    margin-top: 20px;
+
+    background: white;
+
+    border:
+        1px solid #dce6ea;
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 8px 28px
+        rgba(15,45,55,0.05);
+}
+
+.classification-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 15px;
+}
+
+.classification-title {
+
+    font-size: 15px;
+
+    font-weight: 700;
+}
+
+.classification-subtitle {
+
+    font-size: 11px;
+
+    color: #7a8c93;
+}
+
+.classification-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    gap: 8px;
+}
+
+.class-box {
+
+    border:
+        1px solid #e0e7ea;
+
+    border-radius: 10px;
+
+    padding: 10px;
+
+    background:
+        #fbfcfc;
+}
+
+.class-color {
+
+    width: 100%;
+
+    height: 6px;
+
+    border-radius: 4px;
+
+    margin-bottom: 9px;
+}
+
+.class-number {
+
+    font-size: 10px;
+
+    color: #82939a;
+}
+
+.class-name {
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    margin-top: 2px;
+
+    color: #344e58;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+
+    max-width: 1450px;
+
+    margin: auto;
+
+    padding:
+        0
+        clamp(20px, 5vw, 70px)
+        35px;
+
+    color: #78909a;
+
+    font-size: 11px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   LEAFLET CUSTOM
+========================================================= */
+
+.leaflet-control-zoom {
+
+    border: none !important;
+
+    box-shadow:
+        0 5px 15px
+        rgba(0,0,0,0.15) !important;
+}
+
+.leaflet-control-zoom a {
+
+    border: none !important;
+
+    color: #38525c !important;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 950px) {
+
+    .dashboard {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+    .sidebar {
+
+        position: static;
+
+    }
+
+    .classification-grid {
+
+        grid-template-columns:
+            repeat(4, 1fr);
+
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .header {
+
+        padding:
+            20px;
+
+    }
+
+    .main {
+
+        padding:
+            20px;
+
+    }
+
+    .dashboard {
+
+        gap: 14px;
+
+    }
+
+    .map-topbar {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+    }
+
+    #interactive-map {
+
+        height: 520px;
+
+        min-height: 520px;
+
+    }
+
+    .legend {
+
+        right: 8px;
+
+        bottom: 8px;
+
+        width: 165px;
+
+        padding: 11px;
+
+    }
+
+    .info-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+    .info-card {
+
+        border-right: none;
+
+        border-bottom:
+            1px solid #e5ecef;
+
+    }
+
+    .info-card:last-child {
+
+        border-bottom: none;
+
+    }
+
+    .classification-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+}
+
+</style>
+
 </head>
+
 
 <body>
 
-<header>
-    <h1>Marine Spatial Data Portal</h1>
-    <p>Spatio-Temporal Habitat Classification of Rajuni Kecil, Taka Bonerate</p>
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
+<header class="header">
+
+    <div class="header-inner">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🌊
+            </div>
+
+            <div>
+
+                <div class="brand-title">
+                    Marine Spatial Data Portal
+                </div>
+
+                <div class="brand-subtitle">
+                    GIS · Remote Sensing · Marine Environment
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="header-description">
+
+            <h1>
+                Marine Habitat
+                Spatial Visualization
+            </h1>
+
+            <p>
+                Interactive visualization of classified
+                marine spatial data across multiple
+                observation and prediction years.
+            </p>
+
+        </div>
+
+    </div>
+
 </header>
 
-<main>
 
-    <!-- CONTROL PANEL -->
-    <div class="control-panel">
 
-        <div class="control-title">
-            Select Year
-        </div>
+<!-- =====================================================
+     MAIN
+====================================================== -->
 
-        <div class="year-buttons">
+<main class="main">
 
-            <button
-                class="year-btn active"
-                data-year="2021">
-                2021
-            </button>
 
-            <button
-                class="year-btn"
-                data-year="2024">
-                2024
-            </button>
+    <div class="dashboard">
 
-            <button
-                class="year-btn"
-                data-year="2027">
-                2027
-            </button>
 
-            <button
-                class="year-btn"
-                data-year="2030">
-                2030
-            </button>
+        <!-- =================================================
+             SIDEBAR
+        ================================================== -->
 
-        </div>
+        <aside class="sidebar">
 
-        <div class="controls-row">
+            <div class="sidebar-title">
+                Map Controls
+            </div>
+
+            <div class="sidebar-description">
+
+                Explore spatial classification data
+                by year and adjust the visualization
+                settings.
+
+            </div>
+
+
+            <!-- YEAR -->
+
+            <div class="control-section">
+
+                <div class="control-title">
+                    Temporal Data
+                </div>
+
+                <div class="year-grid">
+
+                    <button
+                        class="year-button active"
+                        data-year="2021"
+                    >
+                        2021
+                    </button>
+
+                    <button
+                        class="year-button"
+                        data-year="2024"
+                    >
+                        2024
+                    </button>
+
+                    <button
+                        class="year-button"
+                        data-year="2027"
+                    >
+                        2027
+                    </button>
+
+                    <button
+                        class="year-button"
+                        data-year="2030"
+                    >
+                        2030
+                    </button>
+
+                </div>
+
+            </div>
+
 
             <!-- OPACITY -->
-            <div class="control-group">
 
-                <label for="opacitySlider">
+            <div class="control-section">
+
+                <div class="control-title">
                     Raster Opacity
-                </label>
+                </div>
 
-                <input
-                    type="range"
-                    id="opacitySlider"
-                    min="0"
-                    max="1"
-                    step="0.05"
-                    value="0.75"
-                >
+                <div class="opacity-row">
 
-                <span id="opacityValue">
-                    75%
-                </span>
+                    <input
+                        type="range"
+                        id="opacity-slider"
+                        min="0"
+                        max="1"
+                        step="0.05"
+                        value="0.75"
+                    >
+
+                    <span
+                        class="opacity-number"
+                        id="opacity-value"
+                    >
+                        75%
+                    </span>
+
+                </div>
 
             </div>
+
 
             <!-- BASEMAP -->
-            <div class="control-group">
 
-                <label for="basemapSelect">
+            <div class="control-section">
+
+                <div class="control-title">
                     Basemap
-                </label>
+                </div>
 
-                <select id="basemapSelect">
+                <div class="basemap-grid">
 
-                    <option value="osm">
-                        OpenStreetMap
-                    </option>
+                    <button
+                        class="basemap-button active"
+                        id="osm-button"
+                    >
+                        Street Map
+                    </button>
 
-                    <option value="satellite">
+                    <button
+                        class="basemap-button"
+                        id="satellite-button"
+                    >
                         Satellite
-                    </option>
+                    </button>
 
-                </select>
+                </div>
 
             </div>
 
-        </div>
+
+            <!-- STATUS -->
+
+            <div class="status-card">
+
+                <div class="status-line">
+
+                    <span class="status-dot"></span>
+
+                    <span>
+                        Spatial dataset loaded
+                    </span>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- =================================================
+             MAP
+        ================================================== -->
+
+        <section class="map-card">
+
+
+            <div class="map-topbar">
+
+                <div>
+
+                    <div class="map-title">
+                        Habitat Classification Map
+                    </div>
+
+                    <div class="map-subtitle">
+                        GeoTIFF spatial classification
+                        · Classes 0–6
+                    </div>
+
+                </div>
+
+                <div
+                    class="dataset-badge"
+                    id="dataset-badge"
+                >
+                    2021 · Allen Coral Atlas
+                </div>
+
+            </div>
+
+
+            <div class="map-wrapper">
+
+
+                <div
+                    class="map-loading hidden"
+                    id="map-loading"
+                >
+                    Loading GeoTIFF...
+                </div>
+
+
+                <div id="interactive-map"></div>
+
+
+                <!-- LEGEND -->
+
+                <div class="legend">
+
+                    <div class="legend-header">
+
+                        <span class="legend-title">
+                            Legend
+                        </span>
+
+                        <span class="legend-count">
+                            7 classes
+                        </span>
+
+                    </div>
+
+
+                    <div class="legend-item">
+
+                        <span
+                            class="legend-color"
+                            style="background:#F4D58D"
+                        ></span>
+
+                        <span>
+                            Sand
+                        </span>
+
+                    </div>
+
+
+                    <div class="legend-item">
+
+                        <span
+                            class="legend-color"
+                            style="background:#8B5A2B"
+                        ></span>
+
+                        <span>
+                            Rubber
+                        </span>
+
+                    </div>
+
+
+                    <div class="legend-item">
+
+                        <span
+                            class="legend-color"
+                            style="background:#808080"
+                        ></span>
+
+                        <span>
+                            Rock
+                        </span>
+
+                    </div>
+
+
+                    <div class="legend-item">
+
+                        <span
+                            class="legend-color"
+                            style="background:#2E8B57"
+                        ></span>
+
+                        <span>
+                            Seagrass
+                        </span>
+
+                    </div>
+
+
+                    <div class="legend-item">
+
+                        <span
+                            class="legend-color"
+                            style="background:#FF6B6B"
+                        ></span>
+
+                        <span>
+                            Coral
+                        </span>
+
+                    </div>
+
+
+                    <div class="legend-item">
+
+                        <span
+                            class="legend-color"
+                            style="background:#7B68EE"
+                        ></span>
+
+                        <span>
+                            Microalga
+                        </span>
+
+                    </div>
+
+
+                    <div class="legend-item">
+
+                        <span
+                            class="legend-color"
+                            style="
+                                background:#ffffff;
+                                border:
+                                    1px dashed #64748b;
+                            "
+                        ></span>
+
+                        <span>
+                            No Mapping
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="map-error"
+                id="map-error"
+            ></div>
+
+
+            <!-- INFO -->
+
+            <div class="info-grid">
+
+                <div class="info-card">
+
+                    <div class="info-label">
+                        Selected Year
+                    </div>
+
+                    <div
+                        class="info-value"
+                        id="map-year"
+                    >
+                        2021
+                    </div>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <div class="info-label">
+                        Data Source
+                    </div>
+
+                    <div
+                        class="info-value"
+                        id="map-source"
+                    >
+                        Allen Coral Atlas
+                    </div>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <div class="info-label">
+                        Classification
+                    </div>
+
+                    <div class="info-value">
+                        7 Classes · 0–6
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
 
     </div>
 
 
-    <!-- MAP -->
-    <div class="map-card">
 
-        <div id="map-loading">
-            Loading spatial data...
-        </div>
+    <!-- =================================================
+         CLASSIFICATION SUMMARY
+    ================================================== -->
 
-        <div id="map-error"></div>
+    <section class="classification">
 
-        <div id="interactive-map"></div>
+        <div class="classification-header">
 
+            <div>
 
-        <!-- LEGEND -->
-        <div class="legend">
+                <div class="classification-title">
+                    Habitat Classification
+                </div>
 
-            <div class="legend-title">
-                Habitat Classification
-            </div>
+                <div class="classification-subtitle">
+                    Raster class interpretation
+                </div>
 
-            <div class="legend-item">
-                <span
-                    class="legend-color"
-                    style="background: transparent;">
-                </span>
-                No Mapping
-            </div>
-
-            <div class="legend-item">
-                <span
-                    class="legend-color"
-                    style="background: #F4D58D;">
-                </span>
-                Sand
-            </div>
-
-            <div class="legend-item">
-                <span
-                    class="legend-color"
-                    style="background: #8B5A2B;">
-                </span>
-                Rubber
-            </div>
-
-            <div class="legend-item">
-                <span
-                    class="legend-color"
-                    style="background: #808080;">
-                </span>
-                Rock
-            </div>
-
-            <div class="legend-item">
-                <span
-                    class="legend-color"
-                    style="background: #2E8B57;">
-                </span>
-                Seagrass
-            </div>
-
-            <div class="legend-item">
-                <span
-                    class="legend-color"
-                    style="background: #FF6B6B;">
-                </span>
-                Coral
-            </div>
-
-            <div class="legend-item">
-                <span
-                    class="legend-color"
-                    style="background: #7B68EE;">
-                </span>
-                Microalga
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- INFORMATION -->
-    <div class="info-panel">
-
-        <div class="info-box">
-
-            <div class="info-label">
-                Selected Year
-            </div>
-
-            <div
-                class="info-value"
-                id="selectedYear">
-                2021
             </div>
 
         </div>
 
 
-        <div class="info-box">
+        <div class="classification-grid">
 
-            <div class="info-label">
-                Data Source
+
+            <div class="class-box">
+
+                <div
+                    class="class-color"
+                    style="background:#ffffff;border:1px dashed #94a3b8;"
+                ></div>
+
+                <div class="class-number">
+                    Class 0
+                </div>
+
+                <div class="class-name">
+                    No Mapping
+                </div>
+
             </div>
 
-            <div
-                class="info-value"
-                id="dataSource">
-                Allen Coral Atlas
+
+            <div class="class-box">
+
+                <div
+                    class="class-color"
+                    style="background:#F4D58D"
+                ></div>
+
+                <div class="class-number">
+                    Class 1
+                </div>
+
+                <div class="class-name">
+                    Sand
+                </div>
+
+            </div>
+
+
+            <div class="class-box">
+
+                <div
+                    class="class-color"
+                    style="background:#8B5A2B"
+                ></div>
+
+                <div class="class-number">
+                    Class 2
+                </div>
+
+                <div class="class-name">
+                    Rubber
+                </div>
+
+            </div>
+
+
+            <div class="class-box">
+
+                <div
+                    class="class-color"
+                    style="background:#808080"
+                ></div>
+
+                <div class="class-number">
+                    Class 3
+                </div>
+
+                <div class="class-name">
+                    Rock
+                </div>
+
+            </div>
+
+
+            <div class="class-box">
+
+                <div
+                    class="class-color"
+                    style="background:#2E8B57"
+                ></div>
+
+                <div class="class-number">
+                    Class 4
+                </div>
+
+                <div class="class-name">
+                    Seagrass
+                </div>
+
+            </div>
+
+
+            <div class="class-box">
+
+                <div
+                    class="class-color"
+                    style="background:#FF6B6B"
+                ></div>
+
+                <div class="class-number">
+                    Class 5
+                </div>
+
+                <div class="class-name">
+                    Coral
+                </div>
+
+            </div>
+
+
+            <div class="class-box">
+
+                <div
+                    class="class-color"
+                    style="background:#7B68EE"
+                ></div>
+
+                <div class="class-number">
+                    Class 6
+                </div>
+
+                <div class="class-name">
+                    Microalga
+                </div>
+
             </div>
 
         </div>
 
-
-        <div class="info-box">
-
-            <div class="info-label">
-                Coral Reef Area
-            </div>
-
-            <div
-                class="info-value"
-                id="coralArea">
-                27.50 km²
-            </div>
-
-        </div>
-
-    </div>
+    </section>
 
 </main>
 
 
-<footer>
-    Marine Spatial Data Portal | WebGIS Project
+
+<!-- =====================================================
+     FOOTER
+====================================================== -->
+
+<footer class="footer">
+
+    Marine Spatial Data Portal ·
+    WebGIS Portfolio Project ·
+    Spatial Data Visualization
+
 </footer>
 
 
-<!-- LEAFLET -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<!-- GEORASTER -->
-<script src="https://unpkg.com/georaster"></script>
+<!-- =====================================================
+     LEAFLET
+====================================================== -->
 
-<!-- GEORASTER LAYER -->
-<script src="https://unpkg.com/georaster-layer-for-leaflet/dist/georaster-layer-for-leaflet.min.js"></script>
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<script
+src="https://unpkg.com/georaster">
+</script>
+
+<script
+src="https://unpkg.com/georaster-layer-for-leaflet/dist/georaster-layer-for-leaflet.min.js">
+</script>
+
 
 
 <script>
 
-    /* =========================================================
-       RASTER DATA
-    ========================================================= */
+/* =========================================================
+   DATA
+========================================================= */
 
-    const rasterData = {
+const rasterData = {
 
-        2021: "./ClippedRajuni2021.tif",
+    2021:
+        "./ClippedRajuni2021.tif",
 
-        2024: "./2024new.tif",
+    2024:
+        "./2024new.tif",
 
-        2027: "./2027new.tif",
+    2027:
+        "./2027new.tif",
 
-        2030: "./2030new.tif"
+    2030:
+        "./2030new.tif"
 
-    };
-
-
-    /* =========================================================
-       DATA SOURCE
-    ========================================================= */
-
-    const sourceData = {
-
-        2021: "Allen Coral Atlas",
-
-        2024: "Allen Coral Atlas",
-
-        2027: "ANN Prediction",
-
-        2030: "ANN Prediction"
-
-    };
+};
 
 
-    /* =========================================================
-       CORAL AREA
-    ========================================================= */
+const sourceData = {
 
-    const coralArea = {
+    2021:
+        "Allen Coral Atlas",
 
-        2021: "27.50 km²",
+    2024:
+        "Allen Coral Atlas",
 
-        2024: "35.24 km²",
+    2027:
+        "ANN Prediction",
 
-        2027: "27.18 km²",
+    2030:
+        "ANN Prediction"
 
-        2030: "30.17 km²"
-
-    };
-
-
-    /* =========================================================
-       MAP INITIALIZATION
-    ========================================================= */
-
-    const map = L.map("interactive-map", {
-
-        center: [-6.49, 121.06],
-
-        zoom: 11,
-
-        zoomControl: true
-
-    });
+};
 
 
-    /* =========================================================
-       BASEMAPS
-    ========================================================= */
+/* =========================================================
+   VARIABLES
+========================================================= */
 
-    const osm = L.tileLayer(
+let map;
 
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+let currentRaster = null;
 
+let opacity = 0.75;
+
+let osm;
+
+let satellite;
+
+
+/* =========================================================
+   CLASS COLORS
+========================================================= */
+
+const classColors = {
+
+    0:
+        "rgba(0,0,0,0)",
+
+    1:
+        "#F4D58D",
+
+    2:
+        "#8B5A2B",
+
+    3:
+        "#808080",
+
+    4:
+        "#2E8B57",
+
+    5:
+        "#FF6B6B",
+
+    6:
+        "#7B68EE"
+
+};
+
+
+/* =========================================================
+   INIT MAP
+========================================================= */
+
+function initializeMap() {
+
+    map = L.map(
+        "interactive-map",
         {
 
-            maxZoom: 19,
+            center:
+                [
+                    -6.49,
+                    121.06
+                ],
 
-            attribution:
-                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            zoom:
+                12,
+
+            zoomControl:
+                true
 
         }
-
     );
 
 
-    const satellite = L.tileLayer(
+    /* =====================================================
+       OSM
+    ====================================================== */
 
-        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    osm =
+        L.tileLayer(
 
-        {
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
 
-            maxZoom: 19,
+            {
 
-            attribution:
-                "Tiles &copy; Esri"
+                maxZoom:
+                    19,
 
-        }
+                attribution:
+                    "&copy; OpenStreetMap contributors"
 
-    );
+            }
+
+        );
+
+
+    /* =====================================================
+       SATELLITE
+    ====================================================== */
+
+    satellite =
+        L.tileLayer(
+
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+
+            {
+
+                maxZoom:
+                    19,
+
+                attribution:
+                    "Tiles &copy; Esri"
+
+            }
+
+        );
 
 
     osm.addTo(map);
 
 
-    /* =========================================================
-       GLOBAL VARIABLES
-    ========================================================= */
-
-    let currentLayer = null;
-
-    let currentYear = 2021;
-
-    let currentOpacity = 0.75;
+    setTimeout(
+        () => map.invalidateSize(),
+        500
+    );
 
 
-    /* =========================================================
-       UI ELEMENTS
-    ========================================================= */
+    loadRaster(2021);
 
-    const loadingBox =
-        document.getElementById("map-loading");
-
-    const errorBox =
-        document.getElementById("map-error");
-
-    const opacitySlider =
-        document.getElementById("opacitySlider");
-
-    const opacityValue =
-        document.getElementById("opacityValue");
-
-    const basemapSelect =
-        document.getElementById("basemapSelect");
+}
 
 
-    /* =========================================================
-       CLASSIFICATION COLORS
-    ========================================================= */
+/* =========================================================
+   LOAD RASTER
+========================================================= */
 
-    function getClassColor(value) {
+async function loadRaster(year) {
 
-        value = Math.round(value);
+    const loading =
+        document.getElementById(
+            "map-loading"
+        );
 
-        switch (value) {
-
-            case 0:
-                // No Mapping
-                return "rgba(0,0,0,0)";
-
-            case 1:
-                // Sand
-                return "#F4D58D";
-
-            case 2:
-                // Rubber
-                return "#8B5A2B";
-
-            case 3:
-                // Rock
-                return "#808080";
-
-            case 4:
-                // Seagrass
-                return "#2E8B57";
-
-            case 5:
-                // Coral
-                return "#FF6B6B";
-
-            case 6:
-                // Microalga
-                return "#7B68EE";
-
-            default:
-                return "rgba(0,0,0,0)";
-        }
-    }
+    const error =
+        document.getElementById(
+            "map-error"
+        );
 
 
-    /* =========================================================
-       LOAD RASTER
-    ========================================================= */
+    loading.classList.remove(
+        "hidden"
+    );
 
-    async function loadYear(year) {
+    error.classList.remove(
+        "show"
+    );
 
-        currentYear = year;
 
-        loadingBox.style.display = "block";
+    try {
 
-        errorBox.style.display = "none";
 
-        /*
-         * Remove previous raster
-         */
+        /* REMOVE OLD RASTER */
 
-        if (currentLayer) {
+        if (currentRaster) {
 
-            map.removeLayer(currentLayer);
+            map.removeLayer(
+                currentRaster
+            );
 
-            currentLayer = null;
+            currentRaster = null;
 
         }
 
 
-        const url =
-            rasterData[year] +
-            "?v=" +
-            Date.now();
+        /* FETCH */
 
-
-        try {
-
-            console.log("Loading TIFF:", url);
-
-
-            /*
-             * Fetch TIFF
-             */
-
-            const response =
-                await fetch(url);
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    "TIFF tidak ditemukan. HTTP status: " +
-                    response.status
-                );
-
-            }
-
-
-            const arrayBuffer =
-                await response.arrayBuffer();
-
-
-            console.log(
-                "TIFF downloaded:",
-                arrayBuffer.byteLength,
-                "bytes"
+        const response =
+            await fetch(
+                rasterData[year]
+                +
+                "?v="
+                +
+                Date.now()
             );
 
 
-            /*
-             * Parse GeoTIFF
-             */
+        if (!response.ok) {
 
-            const georaster =
-                await parseGeoraster(arrayBuffer);
+            throw new Error(
+                "GeoTIFF tidak ditemukan. HTTP "
+                +
+                response.status
+            );
+
+        }
 
 
-            console.log(
-                "GeoRaster:",
-                georaster
+        const buffer =
+            await response.arrayBuffer();
+
+
+        console.log(
+            "Loading:",
+            rasterData[year]
+        );
+
+
+        /* PARSE */
+
+        const georaster =
+            await parseGeoraster(
+                buffer
             );
 
 
-            console.log(
-                "Projection:",
-                georaster.projection
-            );
+        console.log(
+            "Projection:",
+            georaster.projection
+        );
 
-            console.log(
-                "Width:",
-                georaster.width
-            );
+        console.log(
+            "Width:",
+            georaster.width
+        );
 
-            console.log(
-                "Height:",
-                georaster.height
-            );
+        console.log(
+            "Height:",
+            georaster.height
+        );
 
-            console.log(
-                "Number of bands:",
-                georaster.numberOfRasters
-            );
+        console.log(
+            "Bands:",
+            georaster.numberOfRasters
+        );
 
-            console.log(
-                "NoData:",
-                georaster.noDataValue
-            );
-
-            console.log(
-                "Extent:",
-                georaster.xmin,
-                georaster.ymin,
-                georaster.xmax,
-                georaster.ymax
-            );
+        console.log(
+            "Extent:",
+            georaster.xmin,
+            georaster.ymin,
+            georaster.xmax,
+            georaster.ymax
+        );
 
 
-            /*
-             * Create raster layer
-             */
+        /* =================================================
+           RASTER LAYER
+        ================================================= */
 
-            currentLayer =
-                new GeoRasterLayer({
+        currentRaster =
+            new GeoRasterLayer({
 
-                    georaster: georaster,
+                georaster:
+                    georaster,
 
-                    opacity: currentOpacity,
+                opacity:
+                    opacity,
 
-                    resolution: 256,
+                resolution:
+                    256,
 
-                    pixelValuesToColorFn:
-                        function(values) {
-
-                            /*
-                             * TIFF is classified raster.
-                             *
-                             * Values:
-                             * 0 = No Mapping
-                             * 1 = Sand
-                             * 2 = Rubber
-                             * 3 = Rock
-                             * 4 = Seagrass
-                             * 5 = Coral
-                             * 6 = Microalga
-                             */
-
-                            if (
-                                !values ||
-                                values.length === 0
-                            ) {
-
-                                return null;
-
-                            }
+                pixelValuesToColorFn:
+                    function(values) {
 
 
-                            const value =
-                                values[0];
+                        if (
+                            !values
+                            ||
+                            values.length === 0
+                        ) {
 
-
-                            if (
-                                value === null ||
-                                value === undefined ||
-                                Number.isNaN(value)
-                            ) {
-
-                                return null;
-
-                            }
-
-
-                            return getClassColor(value);
+                            return null;
 
                         }
 
-                });
+
+                        const value =
+                            Number(
+                                values[0]
+                            );
 
 
-            /*
-             * Add raster to map
-             */
+                        if (
+                            !Number.isFinite(
+                                value
+                            )
+                        ) {
 
-            currentLayer.addTo(map);
+                            return null;
+
+                        }
 
 
-            /*
-             * Fit map to raster extent
-             */
+                        const classValue =
+                            Math.round(
+                                value
+                            );
 
-            if (
-                currentLayer.getBounds
-            ) {
+
+                        if (
+                            classValue === 0
+                        ) {
+
+                            return null;
+
+                        }
+
+
+                        if (
+                            classValue >= 1
+                            &&
+                            classValue <= 6
+                        ) {
+
+                            return classColors[
+                                classValue
+                            ];
+
+                        }
+
+
+                        return null;
+
+                    }
+
+            });
+
+
+        currentRaster.addTo(
+            map
+        );
+
+
+        /* =================================================
+           FIT MAP
+        ================================================= */
+
+        setTimeout(
+            function() {
 
                 const bounds =
-                    currentLayer.getBounds();
+                    currentRaster.getBounds();
 
 
-                if (bounds &&
-                    bounds.isValid()) {
+                if (
+                    bounds
+                    &&
+                    bounds.isValid()
+                ) {
 
                     map.fitBounds(
                         bounds,
                         {
-                            padding: [20, 20]
+
+                            padding:
+                                [
+                                    20,
+                                    20
+                                ],
+
+                            maxZoom:
+                                17
+
                         }
                     );
 
                 }
 
-            }
+            },
+            500
+        );
 
 
-            /*
-             * Update information
-             */
+        /* =================================================
+           UPDATE INFO
+        ================================================= */
 
-            document.getElementById(
-                "selectedYear"
-            ).textContent = year;
-
-
-            document.getElementById(
-                "dataSource"
-            ).textContent =
-                sourceData[year];
+        document
+            .getElementById(
+                "map-year"
+            )
+            .textContent =
+            year;
 
 
-            document.getElementById(
-                "coralArea"
-            ).textContent =
-                coralArea[year];
+        document
+            .getElementById(
+                "map-source"
+            )
+            .textContent =
+            sourceData[year];
 
 
-            loadingBox.style.display =
-                "none";
+        document
+            .getElementById(
+                "dataset-badge"
+            )
+            .textContent =
+            year
+            +
+            " · "
+            +
+            sourceData[year];
 
-
-            console.log(
-                "Raster successfully displayed:",
-                year
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "Raster loading error:",
-                error
-            );
-
-
-            loadingBox.style.display =
-                "none";
-
-
-            errorBox.style.display =
-                "block";
-
-
-            errorBox.innerHTML =
-                "<strong>Gagal memuat data.</strong><br>" +
-                error.message +
-                "<br><br>" +
-                "Pastikan file TIFF tersedia di GitHub repository " +
-                "dan nama file sesuai dengan kode.";
-
-
-        }
 
     }
 
+    catch (err) {
 
-    /* =========================================================
-       YEAR BUTTONS
-    ========================================================= */
 
-    document
-        .querySelectorAll(".year-btn")
-        .forEach(function(button) {
+        console.error(
+            err
+        );
+
+
+        error.textContent =
+            "GeoTIFF gagal dimuat: "
+            +
+            err.message;
+
+
+        error.classList.add(
+            "show"
+        );
+
+    }
+
+    finally {
+
+        loading.classList.add(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   YEAR BUTTON
+========================================================= */
+
+document
+    .querySelectorAll(
+        ".year-button"
+    )
+    .forEach(
+        button => {
 
             button.addEventListener(
                 "click",
                 function() {
 
-                    const year =
-                        Number(
-                            this.dataset.year
-                        );
-
-
-                    /*
-                     * Update active button
-                     */
 
                     document
-                        .querySelectorAll(".year-btn")
-                        .forEach(function(btn) {
-
-                            btn.classList.remove(
+                        .querySelectorAll(
+                            ".year-button"
+                        )
+                        .forEach(
+                            b =>
+                            b.classList.remove(
                                 "active"
-                            );
-
-                        });
+                            )
+                        );
 
 
                     this.classList.add(
@@ -997,112 +2212,171 @@
                     );
 
 
-                    /*
-                     * Load selected year
-                     */
+                    const year =
+                        Number(
+                            this.dataset.year
+                        );
 
-                    loadYear(year);
+
+                    loadRaster(
+                        year
+                    );
 
                 }
             );
 
-        });
-
-
-    /* =========================================================
-       OPACITY
-    ========================================================= */
-
-    opacitySlider.addEventListener(
-        "input",
-        function() {
-
-            currentOpacity =
-                Number(this.value);
-
-
-            opacityValue.textContent =
-                Math.round(
-                    currentOpacity * 100
-                ) + "%";
-
-
-            if (currentLayer) {
-
-                currentLayer.setOpacity(
-                    currentOpacity
-                );
-
-            }
-
         }
     );
 
 
-    /* =========================================================
-       BASEMAP SWITCHER
-    ========================================================= */
+/* =========================================================
+   OPACITY
+========================================================= */
 
-    basemapSelect.addEventListener(
-        "change",
-        function() {
+const opacitySlider =
+    document.getElementById(
+        "opacity-slider"
+    );
 
-            const selected =
-                this.value;
-
-
-            if (selected === "osm") {
-
-                if (!map.hasLayer(osm)) {
-
-                    map.addLayer(osm);
-
-                }
-
-
-                if (map.hasLayer(satellite)) {
-
-                    map.removeLayer(
-                        satellite
-                    );
-
-                }
-
-            }
-
-
-            if (selected === "satellite") {
-
-                if (!map.hasLayer(satellite)) {
-
-                    map.addLayer(
-                        satellite
-                    );
-
-                }
-
-
-                if (map.hasLayer(osm)) {
-
-                    map.removeLayer(
-                        osm
-                    );
-
-                }
-
-            }
-
-        }
+const opacityValue =
+    document.getElementById(
+        "opacity-value"
     );
 
 
-    /* =========================================================
-       INITIAL LOAD
-    ========================================================= */
+opacitySlider.addEventListener(
+    "input",
+    function() {
 
-    loadYear(2021);
+
+        opacity =
+            Number(
+                this.value
+            );
+
+
+        opacityValue.textContent =
+            Math.round(
+                opacity * 100
+            )
+            +
+            "%";
+
+
+        if (
+            currentRaster
+        ) {
+
+            currentRaster.setOpacity(
+                opacity
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   BASEMAP
+========================================================= */
+
+const osmButton =
+    document.getElementById(
+        "osm-button"
+    );
+
+const satelliteButton =
+    document.getElementById(
+        "satellite-button"
+    );
+
+
+osmButton.addEventListener(
+    "click",
+    function() {
+
+
+        if (
+            map.hasLayer(
+                satellite
+            )
+        ) {
+
+            map.removeLayer(
+                satellite
+            );
+
+        }
+
+
+        osm.addTo(
+            map
+        );
+
+
+        osmButton.classList.add(
+            "active"
+        );
+
+        satelliteButton.classList.remove(
+            "active"
+        );
+
+    }
+);
+
+
+satelliteButton.addEventListener(
+    "click",
+    function() {
+
+
+        if (
+            map.hasLayer(
+                osm
+            )
+        ) {
+
+            map.removeLayer(
+                osm
+            );
+
+        }
+
+
+        satellite.addTo(
+            map
+        );
+
+
+        satelliteButton.classList.add(
+            "active"
+        );
+
+        osmButton.classList.remove(
+            "active"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        initializeMap();
+
+    }
+);
 
 </script>
 
 </body>
+
 </html>
