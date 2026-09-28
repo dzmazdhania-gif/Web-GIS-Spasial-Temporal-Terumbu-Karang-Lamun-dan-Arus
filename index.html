@@ -1,6 +1,9 @@
 <!-- LEAFLET -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+<!-- PROJ4 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.2/proj4.js"></script>
+
 <!-- GEORASTER -->
 <script src="https://unpkg.com/georaster"></script>
 <script src="https://unpkg.com/georaster-layer-for-leaflet/dist/georaster-layer-for-leaflet.min.js"></script>
@@ -21,7 +24,6 @@ const sourceData = {
     2030: "ANN Prediction"
 };
 
-
 let leafletMap = null;
 let currentOverlay = null;
 let currentYear = 2021;
@@ -41,7 +43,8 @@ function initMap() {
 
     if (mapInitialized) return;
 
-    const container = document.getElementById("interactive-map");
+    const container =
+        document.getElementById("interactive-map");
 
     if (!container) {
         console.error("interactive-map tidak ditemukan");
@@ -52,13 +55,15 @@ function initMap() {
 
     leafletMap = L.map("interactive-map");
 
+
     /* BASEMAP */
 
     osmLayer = L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
             maxZoom: 19,
-            attribution: "&copy; OpenStreetMap contributors"
+            attribution:
+                "&copy; OpenStreetMap contributors"
         }
     );
 
@@ -66,27 +71,15 @@ function initMap() {
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         {
             maxZoom: 19,
-            attribution: "Tiles &copy; Esri"
+            attribution:
+                "Tiles &copy; Esri"
         }
     );
 
     osmLayer.addTo(leafletMap);
 
 
-    /*
-       Temporary location
-       Will be replaced by GeoTIFF bounds
-    */
-
-    leafletMap.setView(
-        [-5.50, 120.50],
-        10
-    );
-
-
-    /*
-       LOAD 2021
-    */
+    /* LOAD 2021 */
 
     loadYear(2021);
 
@@ -112,16 +105,13 @@ async function loadYear(year) {
         loading.classList.remove("hidden");
     }
 
-
     try {
 
         console.log("--------------------------------");
         console.log("Loading:", rasterData[year]);
 
 
-        /*
-           REMOVE OLD RASTER
-        */
+        /* REMOVE OLD RASTER */
 
         if (currentOverlay) {
 
@@ -133,15 +123,15 @@ async function loadYear(year) {
         }
 
 
-        /*
-           FETCH FILE
-        */
+        /* FETCH FILE */
 
         const response =
             await fetch(
-                rasterData[year]
+                rasterData[year],
+                {
+                    cache: "no-cache"
+                }
             );
-
 
         console.log(
             "HTTP status:",
@@ -153,19 +143,17 @@ async function loadYear(year) {
 
             throw new Error(
                 "File tidak ditemukan: " +
-                rasterData[year]
+                rasterData[year] +
+                " | HTTP " +
+                response.status
             );
-
         }
 
 
-        /*
-           READ TIFF
-        */
+        /* READ TIFF */
 
         const buffer =
             await response.arrayBuffer();
-
 
         console.log(
             "File size:",
@@ -174,17 +162,13 @@ async function loadYear(year) {
         );
 
 
-        /*
-           PARSE
-        */
+        /* PARSE TIFF */
 
         const georaster =
             await parseGeoraster(buffer);
 
 
-        /*
-           SHOW INFORMATION
-        */
+        /* SHOW INFORMATION */
 
         console.log(
             "========== GEORASTER =========="
@@ -240,9 +224,7 @@ async function loadYear(year) {
         );
 
 
-        /*
-           CREATE LAYER
-        */
+        /* CREATE LAYER */
 
         const layer =
             new GeoRasterLayer({
@@ -266,9 +248,7 @@ async function loadYear(year) {
                         }
 
 
-                        /*
-                           RGB TIFF
-                        */
+                        /* RGB TIFF */
 
                         if (
                             values.length >= 3
@@ -293,9 +273,7 @@ async function loadYear(year) {
                             }
 
 
-                            /*
-                               Transparent black
-                            */
+                            /* TRANSPARENT BLACK */
 
                             if (
                                 r === 0 &&
@@ -306,13 +284,15 @@ async function loadYear(year) {
                             }
 
 
-                            return `rgb(${r},${g},${b})`;
+                            return `rgb(
+                                ${Math.round(r)},
+                                ${Math.round(g)},
+                                ${Math.round(b)}
+                            )`;
                         }
 
 
-                        /*
-                           SINGLE BAND
-                        */
+                        /* SINGLE BAND */
 
                         const value =
                             Number(values[0]);
@@ -325,22 +305,21 @@ async function loadYear(year) {
                         }
 
 
-                        /*
-                           NoData
-                        */
+                        /* NODATA */
 
                         if (
-                            georaster.noDataValue !== null &&
-                            georaster.noDataValue !== undefined &&
-                            value === georaster.noDataValue
+                            georaster.noDataValue !==
+                            null &&
+                            georaster.noDataValue !==
+                            undefined &&
+                            value ===
+                            georaster.noDataValue
                         ) {
                             return null;
                         }
 
 
-                        /*
-                           Background
-                        */
+                        /* BACKGROUND */
 
                         if (
                             value === 0
@@ -349,31 +328,24 @@ async function loadYear(year) {
                         }
 
 
-                        /*
-                           Show raster
-                        */
+                        /* CORAL */
 
                         return "#0f766e";
                     }
             });
 
 
-        /*
-           ADD TO MAP
-        */
+        /* ADD TO MAP */
 
         layer.addTo(
             leafletMap
         );
 
-
         currentOverlay =
             layer;
 
 
-        /*
-           FIT TO GEOTIFF
-        */
+        /* FIT TO GEOTIFF */
 
         setTimeout(function() {
 
@@ -394,7 +366,8 @@ async function loadYear(year) {
                 leafletMap.fitBounds(
                     bounds,
                     {
-                        padding: [20, 20]
+                        padding: [20, 20],
+                        maxZoom: 17
                     }
                 );
 
@@ -403,31 +376,47 @@ async function loadYear(year) {
                 console.error(
                     "GeoTIFF bounds tidak valid."
                 );
-
             }
 
         }, 500);
 
 
-        /*
-           UPDATE INFO
-        */
+        /* UPDATE YEAR */
 
         const yearElement =
-            document.getElementById("map-year");
+            document.getElementById(
+                "map-year"
+            );
 
         if (yearElement) {
-            yearElement.textContent = year;
+
+            yearElement.textContent =
+                year;
         }
 
 
+        /* UPDATE SOURCE */
+
         const sourceElement =
-            document.getElementById("map-source");
+            document.getElementById(
+                "map-source"
+            );
 
         if (sourceElement) {
+
             sourceElement.textContent =
                 sourceData[year];
         }
+
+
+        currentYear = year;
+
+
+        console.log(
+            "GeoTIFF " +
+            year +
+            " berhasil ditampilkan."
+        );
 
     }
 
@@ -435,30 +424,16 @@ async function loadYear(year) {
     catch (error) {
 
         console.error(
-            "================================"
-        );
-
-        console.error(
-            "GEOTIFF ERROR"
-        );
-
-        console.error(
+            "GEOTIFF ERROR:",
             error
         );
 
-        console.error(
-            "================================"
-        );
-
-
-        /*
-           DON'T BREAK THE WHOLE WEBGIS
-        */
+        currentOverlay = null;
 
         alert(
             "GeoTIFF " +
             year +
-            " tidak berhasil dibaca.\n\n" +
+            " gagal dimuat.\n\n" +
             "Cek Console (F12)."
         );
 
@@ -468,9 +443,11 @@ async function loadYear(year) {
     finally {
 
         if (loading) {
-            loading.classList.add("hidden");
-        }
 
+            loading.classList.add(
+                "hidden"
+            );
+        }
     }
 }
 
@@ -525,6 +502,7 @@ const opacitySlider =
     document.getElementById(
         "opacity-slider"
     );
+
 
 if (opacitySlider) {
 
@@ -623,6 +601,7 @@ const coralToggle =
         "coral-toggle"
     );
 
+
 if (coralToggle) {
 
     coralToggle.addEventListener(
@@ -661,6 +640,7 @@ const seagrassToggle =
         "seagrass-toggle"
     );
 
+
 if (seagrassToggle) {
 
     seagrassToggle.addEventListener(
@@ -691,6 +671,7 @@ const currentToggle =
     document.getElementById(
         "current-toggle"
     );
+
 
 if (currentToggle) {
 
@@ -723,6 +704,7 @@ const mapSection =
         "webgis"
     );
 
+
 if (mapSection) {
 
     const observer =
@@ -742,8 +724,7 @@ if (mapSection) {
 
             },
             {
-                rootMargin:
-                    "300px"
+                rootMargin: "300px"
             }
         );
 
@@ -751,6 +732,10 @@ if (mapSection) {
     observer.observe(
         mapSection
     );
+
+} else {
+
+    initMap();
 
 }
 
