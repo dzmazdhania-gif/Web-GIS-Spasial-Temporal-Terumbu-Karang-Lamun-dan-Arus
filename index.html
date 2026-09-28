@@ -1,24 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Marine Spatial Data Portal</title>
 
-    <!-- LEAFLET CSS -->
+    <!-- Leaflet -->
     <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    >
+    />
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -26,457 +20,471 @@
         body {
             margin: 0;
             font-family: Arial, Helvetica, sans-serif;
-            background: #f5f7f8;
+            background: #f4f7f9;
             color: #1f2937;
         }
 
         header {
-            background: #0f3d4c;
+            background: #0f3d56;
             color: white;
-            padding: 28px 6%;
+            padding: 22px 30px;
         }
 
         header h1 {
-            margin: 0 0 8px 0;
-            font-size: 30px;
-            font-weight: 700;
+            margin: 0 0 6px 0;
+            font-size: 28px;
         }
 
         header p {
             margin: 0;
-            font-size: 15px;
+            font-size: 14px;
             opacity: 0.9;
         }
 
         main {
-            width: 100%;
             max-width: 1400px;
             margin: auto;
-            padding: 35px 5%;
+            padding: 24px;
         }
 
-        .section-title {
-            margin-bottom: 20px;
-        }
-
-        .section-title h2 {
-            margin: 0 0 8px 0;
-            font-size: 26px;
-        }
-
-        .section-title p {
-            margin: 0;
-            color: #64748b;
-        }
-
-        .map-card {
+        .control-panel {
             background: white;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
         }
 
-        .controls {
-            padding: 20px;
+        .control-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .year-buttons {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
-            align-items: center;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .control-group {
-            display: flex;
-            align-items: center;
             gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .control-label {
-            font-weight: 600;
-            font-size: 14px;
         }
 
         .year-btn {
-            border: 1px solid #cbd5e1;
-            background: white;
-            color: #334155;
-            padding: 8px 14px;
+            border: none;
+            padding: 10px 20px;
             border-radius: 7px;
+            background: #e5e7eb;
+            color: #374151;
             cursor: pointer;
-            font-size: 14px;
+            font-weight: bold;
+            transition: 0.2s;
         }
 
         .year-btn:hover {
-            background: #f1f5f9;
+            background: #d1d5db;
         }
 
         .year-btn.active {
             background: #0f766e;
             color: white;
-            border-color: #0f766e;
         }
 
-        .opacity-control {
+        .controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            align-items: center;
+            margin-top: 18px;
+        }
+
+        .control-group {
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        #opacity-slider {
-            width: 120px;
+        .control-group label {
+            font-size: 14px;
+            font-weight: bold;
         }
 
-        #opacity-value {
-            min-width: 35px;
+        input[type="range"] {
+            width: 180px;
+        }
+
+        select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+        }
+
+        .map-card {
+            position: relative;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
         }
 
         #interactive-map {
             width: 100%;
-            height: 600px;
-            min-height: 600px;
-            background: #dbeafe;
-        }
-
-        .map-info {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            padding: 20px;
-            background: #f8fafc;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .info-box {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 9px;
-            padding: 14px;
-        }
-
-        .info-label {
-            display: block;
-            color: #64748b;
-            font-size: 12px;
-            margin-bottom: 5px;
-        }
-
-        .info-value {
-            font-weight: 600;
-            font-size: 15px;
+            height: 650px;
+            min-height: 500px;
+            position: relative;
+            z-index: 1;
         }
 
         #map-loading {
             position: absolute;
+            z-index: 1000;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 10px 16px;
+            background: white;
+            padding: 12px 20px;
             border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             font-size: 14px;
-        }
-
-        #map-loading.hidden {
             display: none;
         }
 
         #map-error {
-            display: none;
-            margin: 15px 20px;
-            padding: 12px;
-            border-radius: 8px;
+            position: absolute;
+            z-index: 1000;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 90%;
             background: #fee2e2;
             color: #991b1b;
+            padding: 12px 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            font-size: 14px;
+            display: none;
+        }
+
+        .legend {
+            position: absolute;
+            right: 15px;
+            bottom: 25px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.95);
+            padding: 14px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            min-width: 180px;
+        }
+
+        .legend-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 6px 0;
             font-size: 13px;
         }
 
-        #map-error:not(.hidden) {
-            display: block;
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            border: 1px solid #777;
+            border-radius: 3px;
         }
 
-        .layers {
-            padding: 18px 20px;
-            border-top: 1px solid #e5e7eb;
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 18px;
         }
 
-        .layers-title {
-            font-weight: 600;
-            margin-bottom: 12px;
+        .info-box {
+            background: white;
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
-        .layer-option {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-right: 20px;
-            font-size: 14px;
+        .info-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 17px;
+            font-weight: bold;
+            color: #0f3d56;
         }
 
         footer {
             text-align: center;
-            padding: 30px 20px;
-            color: #64748b;
+            padding: 25px;
             font-size: 13px;
+            color: #6b7280;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 800px) {
+
+            header {
+                padding: 18px;
+            }
 
             header h1 {
-                font-size: 24px;
+                font-size: 22px;
             }
 
             main {
-                padding: 25px 3%;
+                padding: 14px;
             }
 
             #interactive-map {
-                height: 500px;
-                min-height: 500px;
+                height: 550px;
             }
 
-            .map-info {
+            .info-panel {
                 grid-template-columns: 1fr;
             }
 
-            .controls {
+            .controls-row {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 15px;
             }
 
+            .legend {
+                bottom: 15px;
+                right: 10px;
+                font-size: 12px;
+            }
         }
-
     </style>
-
 </head>
 
 <body>
 
 <header>
-
-    <h1>
-        Marine Spatial Data Portal
-    </h1>
-
-    <p>
-        Spatio-temporal visualization of coral reef,
-        seagrass, and ocean-related spatial data
-    </p>
-
+    <h1>Marine Spatial Data Portal</h1>
+    <p>Spatio-Temporal Habitat Classification of Rajuni Kecil, Taka Bonerate</p>
 </header>
 
 <main>
 
-    <div class="section-title">
+    <!-- CONTROL PANEL -->
+    <div class="control-panel">
 
-        <h2>
-            Coral Reef Spatial Visualization
-        </h2>
+        <div class="control-title">
+            Select Year
+        </div>
 
-        <p>
-            Explore coral reef spatial data across different years.
-        </p>
+        <div class="year-buttons">
 
-    </div>
+            <button
+                class="year-btn active"
+                data-year="2021">
+                2021
+            </button>
 
-    <div class="map-card">
+            <button
+                class="year-btn"
+                data-year="2024">
+                2024
+            </button>
 
-        <!-- CONTROLS -->
+            <button
+                class="year-btn"
+                data-year="2027">
+                2027
+            </button>
 
-        <div class="controls">
+            <button
+                class="year-btn"
+                data-year="2030">
+                2030
+            </button>
 
+        </div>
+
+        <div class="controls-row">
+
+            <!-- OPACITY -->
             <div class="control-group">
 
-                <span class="control-label">
-                    Year:
-                </span>
-
-                <button
-                    class="year-btn active"
-                    data-year="2021">
-                    2021
-                </button>
-
-                <button
-                    class="year-btn"
-                    data-year="2024">
-                    2024
-                </button>
-
-                <button
-                    class="year-btn"
-                    data-year="2027">
-                    2027
-                </button>
-
-                <button
-                    class="year-btn"
-                    data-year="2030">
-                    2030
-                </button>
-
-            </div>
-
-            <div class="opacity-control">
-
-                <span class="control-label">
-                    Opacity:
-                </span>
+                <label for="opacitySlider">
+                    Raster Opacity
+                </label>
 
                 <input
                     type="range"
-                    id="opacity-slider"
+                    id="opacitySlider"
                     min="0"
                     max="1"
                     step="0.05"
                     value="0.75"
                 >
 
-                <span id="opacity-value">
+                <span id="opacityValue">
                     75%
                 </span>
 
             </div>
 
+            <!-- BASEMAP -->
             <div class="control-group">
 
-                <span class="control-label">
-                    Basemap:
-                </span>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="basemap"
-                        value="osm"
-                        checked
-                    >
-                    OSM
+                <label for="basemapSelect">
+                    Basemap
                 </label>
 
-                <label>
-                    <input
-                        type="radio"
-                        name="basemap"
-                        value="satellite"
-                    >
-                    Satellite
-                </label>
+                <select id="basemapSelect">
+
+                    <option value="osm">
+                        OpenStreetMap
+                    </option>
+
+                    <option value="satellite">
+                        Satellite
+                    </option>
+
+                </select>
 
             </div>
 
         </div>
 
-        <!-- MAP -->
+    </div>
 
-        <div style="position: relative;">
+
+    <!-- MAP -->
+    <div class="map-card">
+
+        <div id="map-loading">
+            Loading spatial data...
+        </div>
+
+        <div id="map-error"></div>
+
+        <div id="interactive-map"></div>
+
+
+        <!-- LEGEND -->
+        <div class="legend">
+
+            <div class="legend-title">
+                Habitat Classification
+            </div>
+
+            <div class="legend-item">
+                <span
+                    class="legend-color"
+                    style="background: transparent;">
+                </span>
+                No Mapping
+            </div>
+
+            <div class="legend-item">
+                <span
+                    class="legend-color"
+                    style="background: #F4D58D;">
+                </span>
+                Sand
+            </div>
+
+            <div class="legend-item">
+                <span
+                    class="legend-color"
+                    style="background: #8B5A2B;">
+                </span>
+                Rubber
+            </div>
+
+            <div class="legend-item">
+                <span
+                    class="legend-color"
+                    style="background: #808080;">
+                </span>
+                Rock
+            </div>
+
+            <div class="legend-item">
+                <span
+                    class="legend-color"
+                    style="background: #2E8B57;">
+                </span>
+                Seagrass
+            </div>
+
+            <div class="legend-item">
+                <span
+                    class="legend-color"
+                    style="background: #FF6B6B;">
+                </span>
+                Coral
+            </div>
+
+            <div class="legend-item">
+                <span
+                    class="legend-color"
+                    style="background: #7B68EE;">
+                </span>
+                Microalga
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- INFORMATION -->
+    <div class="info-panel">
+
+        <div class="info-box">
+
+            <div class="info-label">
+                Selected Year
+            </div>
 
             <div
-                id="map-loading"
-                class="hidden">
-                Loading GeoTIFF...
+                class="info-value"
+                id="selectedYear">
+                2021
             </div>
-
-            <div id="interactive-map"></div>
 
         </div>
 
-        <div
-            id="map-error"
-            class="hidden">
-        </div>
 
-        <!-- LAYERS -->
+        <div class="info-box">
 
-        <div class="layers">
-
-            <div class="layers-title">
-                Data Layers
+            <div class="info-label">
+                Data Source
             </div>
 
-            <label class="layer-option">
-
-                <input
-                    type="checkbox"
-                    id="coral-toggle"
-                    checked
-                >
-
-                Coral Reef
-
-            </label>
-
-            <label class="layer-option">
-
-                <input
-                    type="checkbox"
-                    id="seagrass-toggle"
-                >
-
-                Seagrass
-
-            </label>
-
-            <label class="layer-option">
-
-                <input
-                    type="checkbox"
-                    id="current-toggle"
-                >
-
-                Ocean Current
-
-            </label>
+            <div
+                class="info-value"
+                id="dataSource">
+                Allen Coral Atlas
+            </div>
 
         </div>
 
-        <!-- INFORMATION -->
 
-        <div class="map-info">
+        <div class="info-box">
 
-            <div class="info-box">
-
-                <span class="info-label">
-                    Selected Year
-                </span>
-
-                <span
-                    class="info-value"
-                    id="map-year">
-                    2021
-                </span>
-
+            <div class="info-label">
+                Coral Reef Area
             </div>
 
-            <div class="info-box">
-
-                <span class="info-label">
-                    Data Source
-                </span>
-
-                <span
-                    class="info-value"
-                    id="map-source">
-                    Allen Coral Atlas
-                </span>
-
-            </div>
-
-            <div class="info-box">
-
-                <span class="info-label">
-                    Coral Reef Area
-                </span>
-
-                <span
-                    class="info-value"
-                    id="coral-area">
-                    27.50 km²
-                </span>
-
+            <div
+                class="info-value"
+                id="coralArea">
+                27.50 km²
             </div>
 
         </div>
@@ -485,44 +493,27 @@
 
 </main>
 
+
 <footer>
-
-    Marine Spatial Data Portal —
-    WebGIS Portfolio Project
-
+    Marine Spatial Data Portal | WebGIS Project
 </footer>
 
 
-<!-- =====================================================
-     LEAFLET
-===================================================== -->
-
+<!-- LEAFLET -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-
-<!-- =====================================================
-     GEORASTER
-===================================================== -->
-
+<!-- GEORASTER -->
 <script src="https://unpkg.com/georaster"></script>
 
-
+<!-- GEORASTER LAYER -->
 <script src="https://unpkg.com/georaster-layer-for-leaflet/dist/georaster-layer-for-leaflet.min.js"></script>
 
 
-<!-- =====================================================
-     MAIN JAVASCRIPT
-===================================================== -->
-
 <script>
 
-document.addEventListener("DOMContentLoaded", function () {
-
-    /*
-    ========================================================
-    TIFF FILES
-    ========================================================
-    */
+    /* =========================================================
+       RASTER DATA
+    ========================================================= */
 
     const rasterData = {
 
@@ -537,11 +528,9 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
 
-    /*
-    ========================================================
-    DATA INFORMATION
-    ========================================================
-    */
+    /* =========================================================
+       DATA SOURCE
+    ========================================================= */
 
     const sourceData = {
 
@@ -556,6 +545,10 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
 
+    /* =========================================================
+       CORAL AREA
+    ========================================================= */
+
     const coralArea = {
 
         2021: "27.50 km²",
@@ -569,243 +562,183 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
 
-    /*
-    ========================================================
-    VARIABLES
-    ========================================================
-    */
+    /* =========================================================
+       MAP INITIALIZATION
+    ========================================================= */
 
-    let leafletMap = null;
+    const map = L.map("interactive-map", {
 
-    let currentOverlay = null;
+        center: [-6.49, 121.06],
+
+        zoom: 11,
+
+        zoomControl: true
+
+    });
+
+
+    /* =========================================================
+       BASEMAPS
+    ========================================================= */
+
+    const osm = L.tileLayer(
+
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+
+        {
+
+            maxZoom: 19,
+
+            attribution:
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+
+        }
+
+    );
+
+
+    const satellite = L.tileLayer(
+
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+
+        {
+
+            maxZoom: 19,
+
+            attribution:
+                "Tiles &copy; Esri"
+
+        }
+
+    );
+
+
+    osm.addTo(map);
+
+
+    /* =========================================================
+       GLOBAL VARIABLES
+    ========================================================= */
+
+    let currentLayer = null;
+
+    let currentYear = 2021;
 
     let currentOpacity = 0.75;
 
-    let osmLayer = null;
 
-    let satelliteLayer = null;
+    /* =========================================================
+       UI ELEMENTS
+    ========================================================= */
+
+    const loadingBox =
+        document.getElementById("map-loading");
+
+    const errorBox =
+        document.getElementById("map-error");
+
+    const opacitySlider =
+        document.getElementById("opacitySlider");
+
+    const opacityValue =
+        document.getElementById("opacityValue");
+
+    const basemapSelect =
+        document.getElementById("basemapSelect");
 
 
-    /*
-    ========================================================
-    INITIALIZE MAP
-    ========================================================
-    */
+    /* =========================================================
+       CLASSIFICATION COLORS
+    ========================================================= */
 
-    function initMap() {
+    function getClassColor(value) {
 
-        const container =
-            document.getElementById(
-                "interactive-map"
-            );
+        value = Math.round(value);
 
+        switch (value) {
 
-        if (!container) {
+            case 0:
+                // No Mapping
+                return "rgba(0,0,0,0)";
 
-            console.error(
-                "interactive-map tidak ditemukan"
-            );
+            case 1:
+                // Sand
+                return "#F4D58D";
 
-            return;
+            case 2:
+                // Rubber
+                return "#8B5A2B";
 
+            case 3:
+                // Rock
+                return "#808080";
+
+            case 4:
+                // Seagrass
+                return "#2E8B57";
+
+            case 5:
+                // Coral
+                return "#FF6B6B";
+
+            case 6:
+                // Microalga
+                return "#7B68EE";
+
+            default:
+                return "rgba(0,0,0,0)";
         }
-
-
-        console.log(
-            "Initializing Leaflet..."
-        );
-
-
-        leafletMap = L.map(
-            "interactive-map",
-            {
-
-                center: [
-                    -6.49,
-                    121.06
-                ],
-
-                zoom: 12
-
-            }
-        );
-
-
-        /*
-        ====================================================
-        OSM
-        ====================================================
-        */
-
-        osmLayer = L.tileLayer(
-
-            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-
-            {
-
-                maxZoom: 19,
-
-                attribution:
-                    "&copy; OpenStreetMap contributors"
-
-            }
-
-        );
-
-
-        /*
-        ====================================================
-        SATELLITE
-        ====================================================
-        */
-
-        satelliteLayer = L.tileLayer(
-
-            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-
-            {
-
-                maxZoom: 19,
-
-                attribution:
-                    "Tiles &copy; Esri"
-
-            }
-
-        );
-
-
-        osmLayer.addTo(
-            leafletMap
-        );
-
-
-        /*
-        ====================================================
-        FORCE MAP SIZE
-        ====================================================
-        */
-
-        setTimeout(function () {
-
-            leafletMap.invalidateSize();
-
-        }, 300);
-
-
-        /*
-        ====================================================
-        LOAD DEFAULT TIFF
-        ====================================================
-        */
-
-        loadYear(2021);
-
     }
 
 
-    /*
-    ========================================================
-    LOAD GEOTIFF
-    ========================================================
-    */
+    /* =========================================================
+       LOAD RASTER
+    ========================================================= */
 
     async function loadYear(year) {
 
-        const loading =
-            document.getElementById(
-                "map-loading"
-            );
+        currentYear = year;
 
-        const errorElement =
-            document.getElementById(
-                "map-error"
-            );
+        loadingBox.style.display = "block";
 
+        errorBox.style.display = "none";
 
-        if (loading) {
+        /*
+         * Remove previous raster
+         */
 
-            loading.classList.remove(
-                "hidden"
-            );
+        if (currentLayer) {
 
-        }
+            map.removeLayer(currentLayer);
 
-
-        if (errorElement) {
-
-            errorElement.classList.add(
-                "hidden"
-            );
-
-            errorElement.textContent = "";
+            currentLayer = null;
 
         }
+
+
+        const url =
+            rasterData[year] +
+            "?v=" +
+            Date.now();
 
 
         try {
 
-            /*
-            =================================================
-            FILE
-            =================================================
-            */
-
-            const url =
-                rasterData[year];
-
-
-            console.log(
-                "===================================="
-            );
-
-            console.log(
-                "Loading TIFF:",
-                url
-            );
+            console.log("Loading TIFF:", url);
 
 
             /*
-            =================================================
-            REMOVE PREVIOUS TIFF
-            =================================================
-            */
-
-            if (currentOverlay) {
-
-                leafletMap.removeLayer(
-                    currentOverlay
-                );
-
-                currentOverlay = null;
-
-            }
-
-
-            /*
-            =================================================
-            FETCH TIFF
-            =================================================
-            */
+             * Fetch TIFF
+             */
 
             const response =
-                await fetch(
-                    url + "?v=" + Date.now()
-                );
-
-
-            console.log(
-                "HTTP status:",
-                response.status
-            );
+                await fetch(url);
 
 
             if (!response.ok) {
 
                 throw new Error(
-                    "TIFF tidak ditemukan: " +
-                    url +
-                    " | HTTP " +
+                    "TIFF tidak ditemukan. HTTP status: " +
                     response.status
                 );
 
@@ -817,35 +750,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             console.log(
-                "TIFF size:",
-                (
-                    arrayBuffer.byteLength /
-                    1024 /
-                    1024
-                ).toFixed(2) +
-                " MB"
+                "TIFF downloaded:",
+                arrayBuffer.byteLength,
+                "bytes"
             );
 
 
             /*
-            =================================================
-            PARSE GEOTIFF
-            =================================================
-            */
-
-            console.log(
-                "Parsing GeoTIFF..."
-            );
-
+             * Parse GeoTIFF
+             */
 
             const georaster =
-                await parseGeoraster(
-                    arrayBuffer
-                );
+                await parseGeoraster(arrayBuffer);
 
 
             console.log(
-                "========== GEORASTER =========="
+                "GeoRaster:",
+                georaster
             );
 
 
@@ -854,86 +775,63 @@ document.addEventListener("DOMContentLoaded", function () {
                 georaster.projection
             );
 
-
             console.log(
                 "Width:",
                 georaster.width
             );
-
 
             console.log(
                 "Height:",
                 georaster.height
             );
 
-
             console.log(
                 "Number of bands:",
                 georaster.numberOfRasters
             );
-
 
             console.log(
                 "NoData:",
                 georaster.noDataValue
             );
 
-
             console.log(
-                "xmin:",
-                georaster.xmin
-            );
-
-
-            console.log(
-                "ymin:",
-                georaster.ymin
-            );
-
-
-            console.log(
-                "xmax:",
-                georaster.xmax
-            );
-
-
-            console.log(
-                "ymax:",
+                "Extent:",
+                georaster.xmin,
+                georaster.ymin,
+                georaster.xmax,
                 georaster.ymax
             );
 
 
             /*
-            =================================================
-            CREATE GEORASTER LAYER
-            =================================================
-            */
+             * Create raster layer
+             */
 
-            const layer =
+            currentLayer =
                 new GeoRasterLayer({
 
-                    georaster:
-                        georaster,
+                    georaster: georaster,
 
-                    opacity:
-                        currentOpacity,
+                    opacity: currentOpacity,
 
-                    /*
-                    IMPORTANT:
-                    resolution lebih kecil = lebih cepat
-                    */
-
-                    resolution:
-                        256,
-
-                    /*
-                    =================================================
-                    COLOR RENDERING
-                    =================================================
-                    */
+                    resolution: 256,
 
                     pixelValuesToColorFn:
                         function(values) {
+
+                            /*
+                             * TIFF is classified raster.
+                             *
+                             * Values:
+                             * 0 = No Mapping
+                             * 1 = Sand
+                             * 2 = Rubber
+                             * 3 = Rock
+                             * 4 = Seagrass
+                             * 5 = Coral
+                             * 6 = Microalga
+                             */
 
                             if (
                                 !values ||
@@ -945,87 +843,14 @@ document.addEventListener("DOMContentLoaded", function () {
                             }
 
 
-                            /*
-                            -----------------------------------------
-                            MULTI-BAND / RGB TIFF
-                            -----------------------------------------
-                            */
-
-                            if (
-                                values.length >= 3
-                            ) {
-
-                                const r =
-                                    Number(
-                                        values[0]
-                                    );
-
-                                const g =
-                                    Number(
-                                        values[1]
-                                    );
-
-                                const b =
-                                    Number(
-                                        values[2]
-                                    );
-
-
-                                if (
-                                    !Number.isFinite(r) ||
-                                    !Number.isFinite(g) ||
-                                    !Number.isFinite(b)
-                                ) {
-
-                                    return null;
-
-                                }
-
-
-                                /*
-                                Transparent background
-                                */
-
-                                if (
-                                    r === 0 &&
-                                    g === 0 &&
-                                    b === 0
-                                ) {
-
-                                    return null;
-
-                                }
-
-
-                                return (
-                                    "rgb(" +
-                                    Math.round(r) +
-                                    "," +
-                                    Math.round(g) +
-                                    "," +
-                                    Math.round(b) +
-                                    ")"
-                                );
-
-                            }
-
-
-                            /*
-                            -----------------------------------------
-                            SINGLE BAND TIFF
-                            -----------------------------------------
-                            */
-
                             const value =
-                                Number(
-                                    values[0]
-                                );
+                                values[0];
 
 
                             if (
-                                !Number.isFinite(
-                                    value
-                                )
+                                value === null ||
+                                value === undefined ||
+                                Number.isNaN(value)
                             ) {
 
                                 return null;
@@ -1033,42 +858,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             }
 
 
-                            /*
-                            NoData
-                            */
-
-                            if (
-                                georaster.noDataValue !==
-                                null &&
-                                georaster.noDataValue !==
-                                undefined &&
-                                value ===
-                                georaster.noDataValue
-                            ) {
-
-                                return null;
-
-                            }
-
-
-                            /*
-                            Background
-                            */
-
-                            if (
-                                value === 0
-                            ) {
-
-                                return null;
-
-                            }
-
-
-                            /*
-                            Coral
-                            */
-
-                            return "#0f766e";
+                            return getClassColor(value);
 
                         }
 
@@ -1076,156 +866,102 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             /*
-            =================================================
-            ADD TIFF TO MAP
-            =================================================
-            */
+             * Add raster to map
+             */
 
-            layer.addTo(
-                leafletMap
-            );
-
-
-            currentOverlay =
-                layer;
-
-
-            console.log(
-                "GeoRasterLayer berhasil ditambahkan."
-            );
+            currentLayer.addTo(map);
 
 
             /*
-            =================================================
-            ZOOM TO TIFF
-            =================================================
-            */
+             * Fit map to raster extent
+             */
 
-            setTimeout(function () {
+            if (
+                currentLayer.getBounds
+            ) {
 
                 const bounds =
-                    layer.getBounds();
+                    currentLayer.getBounds();
 
 
-                console.log(
-                    "TIFF bounds:",
-                    bounds
-                );
+                if (bounds &&
+                    bounds.isValid()) {
 
-
-                if (
-                    bounds &&
-                    bounds.isValid()
-                ) {
-
-                    leafletMap.fitBounds(
+                    map.fitBounds(
                         bounds,
                         {
-                            padding: [
-                                20,
-                                20
-                            ],
-
-                            maxZoom: 17
+                            padding: [20, 20]
                         }
-                    );
-
-                } else {
-
-                    console.error(
-                        "Bounds TIFF tidak valid."
                     );
 
                 }
 
-            }, 500);
+            }
 
 
             /*
-            =================================================
-            UPDATE INFORMATION
-            =================================================
-            */
+             * Update information
+             */
 
             document.getElementById(
-                "map-year"
-            ).textContent =
-                year;
+                "selectedYear"
+            ).textContent = year;
 
 
             document.getElementById(
-                "map-source"
+                "dataSource"
             ).textContent =
                 sourceData[year];
 
 
             document.getElementById(
-                "coral-area"
+                "coralArea"
             ).textContent =
                 coralArea[year];
 
 
+            loadingBox.style.display =
+                "none";
+
+
             console.log(
-                "TIFF " +
-                year +
-                " berhasil ditampilkan."
+                "Raster successfully displayed:",
+                year
             );
 
 
         } catch (error) {
 
             console.error(
-                "===================================="
-            );
-
-            console.error(
-                "GEOTIFF ERROR:",
+                "Raster loading error:",
                 error
             );
 
-            console.error(
-                "===================================="
-            );
+
+            loadingBox.style.display =
+                "none";
 
 
-            currentOverlay =
-                null;
+            errorBox.style.display =
+                "block";
 
 
-            if (errorElement) {
+            errorBox.innerHTML =
+                "<strong>Gagal memuat data.</strong><br>" +
+                error.message +
+                "<br><br>" +
+                "Pastikan file TIFF tersedia di GitHub repository " +
+                "dan nama file sesuai dengan kode.";
 
-                errorElement.textContent =
-                    "GeoTIFF " +
-                    year +
-                    " gagal dimuat: " +
-                    error.message;
-
-                errorElement.classList.remove(
-                    "hidden"
-                );
-
-            }
-
-        } finally {
-
-            if (loading) {
-
-                loading.classList.add(
-                    "hidden"
-                );
-
-            }
 
         }
 
     }
 
 
-    /*
-    ========================================================
-    YEAR BUTTONS
-    ========================================================
-    */
+    /* =========================================================
+       YEAR BUTTONS
+    ========================================================= */
 
     document
         .querySelectorAll(".year-btn")
@@ -1241,25 +977,29 @@ document.addEventListener("DOMContentLoaded", function () {
                         );
 
 
+                    /*
+                     * Update active button
+                     */
+
                     document
-                        .querySelectorAll(
-                            ".year-btn"
-                        )
-                        .forEach(
-                            function(btn) {
+                        .querySelectorAll(".year-btn")
+                        .forEach(function(btn) {
 
-                                btn.classList.remove(
-                                    "active"
-                                );
+                            btn.classList.remove(
+                                "active"
+                            );
 
-                            }
-                        );
+                        });
 
 
                     this.classList.add(
                         "active"
                     );
 
+
+                    /*
+                     * Load selected year
+                     */
 
                     loadYear(year);
 
@@ -1269,273 +1009,98 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
 
-    /*
-    ========================================================
-    OPACITY
-    ========================================================
-    */
-
-    const opacitySlider =
-        document.getElementById(
-            "opacity-slider"
-        );
-
-
-    const opacityValue =
-        document.getElementById(
-            "opacity-value"
-        );
-
-
-    if (opacitySlider) {
-
-        opacitySlider.addEventListener(
-            "input",
-            function() {
-
-                currentOpacity =
-                    Number(
-                        this.value
-                    );
-
-
-                if (currentOverlay) {
-
-                    currentOverlay.setOpacity(
-                        currentOpacity
-                    );
-
-                }
-
-
-                if (opacityValue) {
-
-                    opacityValue.textContent =
-                        Math.round(
-                            currentOpacity * 100
-                        ) + "%";
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /*
-    ========================================================
-    BASEMAP
-    ========================================================
-    */
-
-    document
-        .querySelectorAll(
-            'input[name="basemap"]'
-        )
-        .forEach(function(radio) {
-
-            radio.addEventListener(
-                "change",
-                function() {
-
-                    if (
-                        this.value ===
-                        "osm"
-                    ) {
-
-                        if (
-                            leafletMap.hasLayer(
-                                satelliteLayer
-                            )
-                        ) {
-
-                            leafletMap.removeLayer(
-                                satelliteLayer
-                            );
-
-                        }
-
-
-                        osmLayer.addTo(
-                            leafletMap
-                        );
-
-                    }
-
-
-                    if (
-                        this.value ===
-                        "satellite"
-                    ) {
-
-                        if (
-                            leafletMap.hasLayer(
-                                osmLayer
-                            )
-                        ) {
-
-                            leafletMap.removeLayer(
-                                osmLayer
-                            );
-
-                        }
-
-
-                        satelliteLayer.addTo(
-                            leafletMap
-                        );
-
-                    }
-
-                }
-            );
-
-        });
-
-
-    /*
-    ========================================================
-    CORAL TOGGLE
-    ========================================================
-    */
-
-    const coralToggle =
-        document.getElementById(
-            "coral-toggle"
-        );
-
-
-    if (coralToggle) {
-
-        coralToggle.addEventListener(
-            "change",
-            function() {
-
-                if (!currentOverlay) {
-                    return;
-                }
-
-
-                if (this.checked) {
-
-                    currentOverlay.addTo(
-                        leafletMap
-                    );
-
-                } else {
-
-                    leafletMap.removeLayer(
-                        currentOverlay
-                    );
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /*
-    ========================================================
-    SEAGRASS
-    ========================================================
-    */
-
-    const seagrassToggle =
-        document.getElementById(
-            "seagrass-toggle"
-        );
-
-
-    if (seagrassToggle) {
-
-        seagrassToggle.addEventListener(
-            "change",
-            function() {
-
-                if (this.checked) {
-
-                    alert(
-                        "Seagrass spatial data is not available in the current dataset."
-                    );
-
-                    this.checked =
-                        false;
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /*
-    ========================================================
-    OCEAN CURRENT
-    ========================================================
-    */
-
-    const currentToggle =
-        document.getElementById(
-            "current-toggle"
-        );
-
-
-    if (currentToggle) {
-
-        currentToggle.addEventListener(
-            "change",
-            function() {
-
-                if (this.checked) {
-
-                    alert(
-                        "Ocean current spatial data is not available in the current dataset."
-                    );
-
-                    this.checked =
-                        false;
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /*
-    ========================================================
-    START MAP
-    ========================================================
-    */
-
-    initMap();
-
-
-    /*
-    ========================================================
-    RESIZE
-    ========================================================
-    */
-
-    window.addEventListener(
-        "resize",
+    /* =========================================================
+       OPACITY
+    ========================================================= */
+
+    opacitySlider.addEventListener(
+        "input",
         function() {
 
-            if (leafletMap) {
+            currentOpacity =
+                Number(this.value);
 
-                leafletMap.invalidateSize();
+
+            opacityValue.textContent =
+                Math.round(
+                    currentOpacity * 100
+                ) + "%";
+
+
+            if (currentLayer) {
+
+                currentLayer.setOpacity(
+                    currentOpacity
+                );
 
             }
 
         }
     );
 
-});
+
+    /* =========================================================
+       BASEMAP SWITCHER
+    ========================================================= */
+
+    basemapSelect.addEventListener(
+        "change",
+        function() {
+
+            const selected =
+                this.value;
+
+
+            if (selected === "osm") {
+
+                if (!map.hasLayer(osm)) {
+
+                    map.addLayer(osm);
+
+                }
+
+
+                if (map.hasLayer(satellite)) {
+
+                    map.removeLayer(
+                        satellite
+                    );
+
+                }
+
+            }
+
+
+            if (selected === "satellite") {
+
+                if (!map.hasLayer(satellite)) {
+
+                    map.addLayer(
+                        satellite
+                    );
+
+                }
+
+
+                if (map.hasLayer(osm)) {
+
+                    map.removeLayer(
+                        osm
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       INITIAL LOAD
+    ========================================================= */
+
+    loadYear(2021);
 
 </script>
 
