@@ -15,10 +15,6 @@
 
 <style>
 
-/* =========================================================
-   GLOBAL
-========================================================= */
-
 * {
     box-sizing: border-box;
 }
@@ -1081,10 +1077,6 @@ body {
 <body>
 
 
-<!-- =====================================================
-     HEADER
-====================================================== -->
-
 <header class="header">
 
     <div class="header-inner">
@@ -1130,20 +1122,10 @@ body {
 </header>
 
 
-
-<!-- =====================================================
-     MAIN
-====================================================== -->
-
 <main class="main">
-
 
     <div class="dashboard">
 
-
-        <!-- =================================================
-             SIDEBAR
-        ================================================== -->
 
         <aside class="sidebar">
 
@@ -1159,8 +1141,6 @@ body {
 
             </div>
 
-
-            <!-- YEAR -->
 
             <div class="control-section">
 
@@ -1203,8 +1183,6 @@ body {
             </div>
 
 
-            <!-- OPACITY -->
-
             <div class="control-section">
 
                 <div class="control-title">
@@ -1234,8 +1212,6 @@ body {
             </div>
 
 
-            <!-- BASEMAP -->
-
             <div class="control-section">
 
                 <div class="control-title">
@@ -1263,8 +1239,6 @@ body {
             </div>
 
 
-            <!-- STATUS -->
-
             <div class="status-card">
 
                 <div class="status-line">
@@ -1281,11 +1255,6 @@ body {
 
         </aside>
 
-
-
-        <!-- =================================================
-             MAP
-        ================================================== -->
 
         <section class="map-card">
 
@@ -1346,11 +1315,33 @@ body {
                     </div>
 
 
+                    <!-- CLASS 0 -->
+
                     <div class="legend-item">
 
                         <span
                             class="legend-color"
-                            style="background:#F4D58D"
+                            style="
+                                background:#000000;
+                            "
+                        ></span>
+
+                        <span>
+                            No Mapping
+                        </span>
+
+                    </div>
+
+
+                    <!-- CLASS 1 -->
+
+                    <div class="legend-item">
+
+                        <span
+                            class="legend-color"
+                            style="
+                                background:#FFFFBE;
+                            "
                         ></span>
 
                         <span>
@@ -1360,11 +1351,15 @@ body {
                     </div>
 
 
+                    <!-- CLASS 2 -->
+
                     <div class="legend-item">
 
                         <span
                             class="legend-color"
-                            style="background:#8B5A2B"
+                            style="
+                                background:#E0D05E;
+                            "
                         ></span>
 
                         <span>
@@ -1374,11 +1369,15 @@ body {
                     </div>
 
 
+                    <!-- CLASS 3 -->
+
                     <div class="legend-item">
 
                         <span
                             class="legend-color"
-                            style="background:#808080"
+                            style="
+                                background:#B19C3A;
+                            "
                         ></span>
 
                         <span>
@@ -1388,11 +1387,15 @@ body {
                     </div>
 
 
+                    <!-- CLASS 4 -->
+
                     <div class="legend-item">
 
                         <span
                             class="legend-color"
-                            style="background:#2E8B57"
+                            style="
+                                background:#668438;
+                            "
                         ></span>
 
                         <span>
@@ -1402,11 +1405,15 @@ body {
                     </div>
 
 
+                    <!-- CLASS 5 -->
+
                     <div class="legend-item">
 
                         <span
                             class="legend-color"
-                            style="background:#FF6B6B"
+                            style="
+                                background:#FF6161;
+                            "
                         ></span>
 
                         <span>
@@ -1416,33 +1423,19 @@ body {
                     </div>
 
 
-                    <div class="legend-item">
-
-                        <span
-                            class="legend-color"
-                            style="background:#7B68EE"
-                        ></span>
-
-                        <span>
-                            Microalga
-                        </span>
-
-                    </div>
-
+                    <!-- CLASS 6 -->
 
                     <div class="legend-item">
 
                         <span
                             class="legend-color"
                             style="
-                                background:#ffffff;
-                                border:
-                                    1px dashed #64748b;
+                                background:#9BCC4F;
                             "
                         ></span>
 
                         <span>
-                            No Mapping
+                            Microalga
                         </span>
 
                     </div>
@@ -1457,8 +1450,6 @@ body {
                 id="map-error"
             ></div>
 
-
-            <!-- INFO -->
 
             <div class="info-grid">
 
@@ -1513,11 +1504,6 @@ body {
     </div>
 
 
-
-    <!-- =================================================
-         CLASSIFICATION SUMMARY
-    ================================================== -->
-
     <section class="classification">
 
         <div class="classification-header">
@@ -1540,11 +1526,15 @@ body {
         <div class="classification-grid">
 
 
+            <!-- CLASS 0 -->
+
             <div class="class-box">
 
                 <div
                     class="class-color"
-                    style="background:#ffffff;border:1px dashed #94a3b8;"
+                    style="
+                        background:#000000;
+                    "
                 ></div>
 
                 <div class="class-number">
@@ -1558,11 +1548,15 @@ body {
             </div>
 
 
+            <!-- CLASS 1 -->
+
             <div class="class-box">
 
                 <div
                     class="class-color"
-                    style="background:#F4D58D"
+                    style="
+                        background:#FFFFBE;
+                    "
                 ></div>
 
                 <div class="class-number">
@@ -1576,11 +1570,15 @@ body {
             </div>
 
 
+            <!-- CLASS 2 -->
+
             <div class="class-box">
 
                 <div
                     class="class-color"
-                    style="background:#8B5A2B"
+                    style="
+                        background:#E0D05E;
+                    "
                 ></div>
 
                 <div class="class-number">
@@ -1594,11 +1592,15 @@ body {
             </div>
 
 
+            <!-- CLASS 3 -->
+
             <div class="class-box">
 
                 <div
                     class="class-color"
-                    style="background:#808080"
+                    style="
+                        background:#B19C3A;
+                    "
                 ></div>
 
                 <div class="class-number">
@@ -1612,11 +1614,15 @@ body {
             </div>
 
 
+            <!-- CLASS 4 -->
+
             <div class="class-box">
 
                 <div
                     class="class-color"
-                    style="background:#2E8B57"
+                    style="
+                        background:#668438;
+                    "
                 ></div>
 
                 <div class="class-number">
@@ -1630,11 +1636,15 @@ body {
             </div>
 
 
+            <!-- CLASS 5 -->
+
             <div class="class-box">
 
                 <div
                     class="class-color"
-                    style="background:#FF6B6B"
+                    style="
+                        background:#FF6161;
+                    "
                 ></div>
 
                 <div class="class-number">
@@ -1648,11 +1658,15 @@ body {
             </div>
 
 
+            <!-- CLASS 6 -->
+
             <div class="class-box">
 
                 <div
                     class="class-color"
-                    style="background:#7B68EE"
+                    style="
+                        background:#9BCC4F;
+                    "
                 ></div>
 
                 <div class="class-number">
@@ -1672,11 +1686,6 @@ body {
 </main>
 
 
-
-<!-- =====================================================
-     FOOTER
-====================================================== -->
-
 <footer class="footer">
 
     Marine Spatial Data Portal ·
@@ -1685,11 +1694,6 @@ body {
 
 </footer>
 
-
-
-<!-- =====================================================
-     LEAFLET
-====================================================== -->
 
 <script
 src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
@@ -1702,7 +1706,6 @@ src="https://unpkg.com/georaster">
 <script
 src="https://unpkg.com/georaster-layer-for-leaflet/dist/georaster-layer-for-leaflet.min.js">
 </script>
-
 
 
 <script>
@@ -1770,22 +1773,22 @@ const classColors = {
         "rgba(0,0,0,0)",
 
     1:
-        "#F4D58D",
+        "#FFFFBE",
 
     2:
-        "#8B5A2B",
+        "#E0D05E",
 
     3:
-        "#808080",
+        "#B19C3A",
 
     4:
-        "#2E8B57",
+        "#668438",
 
     5:
-        "#FF6B6B",
+        "#FF6161",
 
     6:
-        "#7B68EE"
+        "#9BCC4F"
 
 };
 
@@ -1816,10 +1819,6 @@ function initializeMap() {
     );
 
 
-    /* =====================================================
-       OSM
-    ====================================================== */
-
     osm =
         L.tileLayer(
 
@@ -1837,10 +1836,6 @@ function initializeMap() {
 
         );
 
-
-    /* =====================================================
-       SATELLITE
-    ====================================================== */
 
     satellite =
         L.tileLayer(
@@ -2040,17 +2035,12 @@ async function loadRaster(year) {
                             );
 
 
-                        if (
-                            classValue === 0
-                        ) {
-
-                            return null;
-
-                        }
-
+                        /*
+                         * CLASS 0–6
+                         */
 
                         if (
-                            classValue >= 1
+                            classValue >= 0
                             &&
                             classValue <= 6
                         ) {
@@ -2149,7 +2139,6 @@ async function loadRaster(year) {
     }
 
     catch (err) {
-
 
         console.error(
             err
